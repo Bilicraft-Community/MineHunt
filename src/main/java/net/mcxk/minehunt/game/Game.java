@@ -149,6 +149,7 @@ public class Game {
         this.roleMapping = new ConcurrentHashMap<>(roleMapTemp);
         Bukkit.broadcastMessage("正在将逃亡者随机传送到远离猎人的位置...");
         getPlayersAsRole(PlayerRole.RUNNER).forEach(this::airDrop);
+        getPlayersAsRole(PlayerRole.HUNTER).forEach(p->p.teleport(p.getWorld().getSpawnLocation()));
         Bukkit.broadcastMessage("设置游戏规则...");
         inGamePlayers.forEach(p->{
             p.setGameMode(GameMode.SURVIVAL);
@@ -201,6 +202,7 @@ public class Game {
             player.setGameMode(GameMode.SPECTATOR);
             player.teleport(location);
         });
+        this.status = GameStatus.ENDED;
         Bukkit.broadcastMessage(ChatColor.YELLOW + "游戏结束! 服务器将在30秒后重新启动！");
         String runnerNames = Util.list2String(getPlayersAsRole(PlayerRole.RUNNER).stream().map(Player::getName).collect(Collectors.toList()));
         String hunterNames = Util.list2String(getPlayersAsRole(PlayerRole.HUNTER).stream().map(Player::getName).collect(Collectors.toList()));
@@ -273,13 +275,6 @@ public class Game {
                 }.runTaskLaterAsynchronously(plugin, 20 * 10);
             }
         }.runTaskLater(MineHunt.getInstance(), 20 * 10);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.shutdown();
-            }
-        }.runTaskLater(MineHunt.getInstance(), 20 * 30);
     }
 
     @SneakyThrows
@@ -305,14 +300,15 @@ public class Game {
 
         int sleep = (int) maxCanCost;
 
-
         if (StringUtils.isNotBlank(gameEndingData.getDragonKiller())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇者", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇士", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
+            Bukkit.broadcastMessage("逃亡者的梦想终于实现了！");
             Thread.sleep(sleep);
         }
 
         if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
             inGamePlayers.forEach(p->p.sendTitle(ChatColor.RED+"逃亡者的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
+            Bukkit.broadcastMessage("又一位逃亡者败在了这里...");
             Thread.sleep(sleep);
         }
 
@@ -324,11 +320,12 @@ public class Game {
             inGamePlayers.forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
-        if (StringUtils.isNotBlank(gameEndingData.getStoneAgePassed())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"文明的第一步", gameEndingData.getStoneAgePassed(),0 ,20000 ,0 ));
-            Thread.sleep(sleep);
-        }
+        inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
+        Thread.sleep((long)sleep/2);
+        inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"星空物语", "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
+        Thread.sleep((long)sleep/2);
 
+        Bukkit.shutdown();
     }
 
     private void registerWatchers() {

@@ -65,7 +65,6 @@ public class ProgressDetectingListener implements Listener {
         }
         if(event.getItem().getItemStack().getType() == Material.BLAZE_ROD){
             plugin.getGame().getProgressManager().unlockProgress(GameProgress.GET_BLAZE_ROD);
-
         }
     }
 

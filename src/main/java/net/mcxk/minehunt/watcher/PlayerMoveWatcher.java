@@ -12,8 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Optional;
 
 public class PlayerMoveWatcher {
-    boolean runnerNether = false;
-    boolean runnerTheEnd = false;
+    private boolean runnerNether = false;
+    private boolean runnerTheEnd = false;
     public PlayerMoveWatcher(){
         new BukkitRunnable(){
             @Override
@@ -29,7 +29,7 @@ public class PlayerMoveWatcher {
                                     Bukkit.broadcastMessage("逃亡者已到达 下界 维度！");
                                 }
                                 if(!runnerTheEnd && environment == World.Environment.THE_END){
-                                    runnerNether = true;
+                                    runnerTheEnd = true;
                                     Bukkit.broadcastMessage("逃亡者已到达 末地 维度！");
                                 }
                             }
