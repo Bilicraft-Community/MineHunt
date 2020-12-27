@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.util.GameEndingData;
 import net.mcxk.minehunt.util.Util;
+import net.mcxk.minehunt.watcher.CountDownWatcher;
 import net.mcxk.minehunt.watcher.PlayerMoveWatcher;
 import net.mcxk.minehunt.watcher.RadarWatcher;
 import net.mcxk.minehunt.watcher.ReconnectWatcher;
@@ -47,6 +48,7 @@ public class Game {
 
     public Game(){
         fixConfig();
+        new CountDownWatcher();
     }
 
     public void switchCompass(boolean unlocked) {
