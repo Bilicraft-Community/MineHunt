@@ -297,13 +297,10 @@ public class Game {
         if (StringUtils.isNotBlank(data.getDamageReceive())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(data.getNetherFortressFinder())) {
+        if (StringUtils.isNotBlank(data.getStoneAgePassed())) {
             needShows++;
         }
         if (StringUtils.isNotBlank(data.getRunnerKiller())) {
-            needShows++;
-        }
-        if (StringUtils.isNotBlank(data.getStrongHoldFinder())) {
             needShows++;
         }
         maxCanCost /= needShows;
@@ -329,12 +326,8 @@ public class Game {
             inGamePlayers.forEach(p->p.sendTitle("最惨怪物标靶", data.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
-        if (StringUtils.isNotBlank(data.getNetherFortressFinder())) {
-            inGamePlayers.forEach(p->p.sendTitle("下界要塞探索者", data.getNetherFortressFinder(),0 ,20000 ,0 ));
-            Thread.sleep(sleep);
-        }
-        if (StringUtils.isNotBlank(data.getStrongHoldFinder())) {
-            inGamePlayers.forEach(p->p.sendTitle("末地要塞揭秘者", data.getStrongHoldFinder(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(data.getStoneAgePassed())) {
+            inGamePlayers.forEach(p->p.sendTitle("文明的第一步", data.getStoneAgePassed(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
 

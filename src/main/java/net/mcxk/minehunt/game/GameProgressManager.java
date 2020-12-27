@@ -2,6 +2,7 @@ package net.mcxk.minehunt.game;
 
 import net.mcxk.minehunt.MineHunt;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -35,40 +36,40 @@ public class GameProgressManager {
                 break;
             case STONE_AGE:
             case IRON_MINED:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包，药水效果已向所有人应用！");
+                broadcastProgress(progress,true,true);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.IRON_ORE,8)));
                 plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION,600,1)));
                 break;
             case COMPASS_UNLOCKED:
             case ENTER_NETHER:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包！");
+                broadcastProgress(progress,true,false);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.OBSIDIAN,4)));
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.FLINT,1)));
                 break;
             case GET_BLAZE_ROD:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励药水效果已向所有人应用！");
+                broadcastProgress(progress,false,true);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE,300,1)));
                 break;
             case GET_ENDER_PERAL:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包！");
+                broadcastProgress(progress,true,false);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL,1)));
                 break;
-            case FIND_NETHER_FORTRESS:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包，药水效果已向所有人应用！");
-                plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,400,1)));
-                break;
-            case FIND_STRONG_HOLD:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包，药水效果已向所有人应用！");
-                plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.ENDER_EYE,1)));
-                plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,600,1)));
-                break;
             case ENTER_END:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包！");
+                broadcastProgress(progress,true,false);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.WATER_BUCKET,1)));
                 break;
             case KILLED_DRAGON:
-                Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，末影龙已被击杀！");
+                broadcastProgress(progress,false,false);
                 break;
+        }
+    }
+    private void broadcastProgress(GameProgress progress, boolean item, boolean buff){
+        Bukkit.broadcastMessage(ChatColor.AQUA+"新的游戏阶段已解锁 "+ChatColor.GREEN+"["+progress.getDisplay()+"]");
+        if(item){
+            Bukkit.broadcastMessage(ChatColor.GREEN+"奖励补给已发放到您的背包中，请查收!");
+        }
+        if(buff){
+            Bukkit.broadcastMessage(ChatColor.GREEN+"奖励药水效果以应用，请查看！");
         }
     }
 }

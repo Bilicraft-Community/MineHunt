@@ -35,6 +35,7 @@ public class ProgressDetectingListener implements Listener {
             return;
         }
         plugin.getGame().getProgressManager().unlockProgress(GameProgress.STONE_AGE);
+        plugin.getGame().getGameEndingDataBuilder().stoneAgePassed(event.getPlayer().getName());
     }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void changeDim(PlayerPortalEvent event){

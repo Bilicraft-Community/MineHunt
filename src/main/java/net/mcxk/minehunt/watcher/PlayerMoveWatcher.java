@@ -20,20 +20,6 @@ public class PlayerMoveWatcher {
             public void run() {
                 MineHunt.getInstance().getGame().getInGamePlayers().forEach(player -> {
                     World.Environment environment = player.getWorld().getEnvironment();
-                    if(environment == World.Environment.NORMAL) {
-                        Location location = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.STRONGHOLD, 1, false);
-                        if (location != null) {
-                            MineHunt.getInstance().getGame().getProgressManager().unlockProgress(GameProgress.FIND_STRONG_HOLD);
-                            MineHunt.getInstance().getGame().getGameEndingDataBuilder().strongHoldFinder(player.getName());
-                        }
-                    }
-                    if(environment == World.Environment.NETHER) {
-                        Location location = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.NETHER_FORTRESS, 1, false);
-                        if (location != null) {
-                            MineHunt.getInstance().getGame().getProgressManager().unlockProgress(GameProgress.FIND_NETHER_FORTRESS);
-                            MineHunt.getInstance().getGame().getGameEndingDataBuilder().netherFortressFinder(player.getName());
-                        }
-                    }
                     if(environment != World.Environment.NORMAL){
                         Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(player);
                         if(role.isPresent()){
