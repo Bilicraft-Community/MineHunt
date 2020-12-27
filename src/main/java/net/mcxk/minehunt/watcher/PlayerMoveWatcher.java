@@ -25,7 +25,6 @@ public class PlayerMoveWatcher {
                         if (location != null) {
                             MineHunt.getInstance().getGame().getProgressManager().unlockProgress(GameProgress.FIND_STRONG_HOLD);
                             MineHunt.getInstance().getGame().getGameEndingDataBuilder().strongHoldFinder(player.getName());
-                            return;
                         }
                     }
                     if(environment == World.Environment.NETHER) {
@@ -35,7 +34,6 @@ public class PlayerMoveWatcher {
                             MineHunt.getInstance().getGame().getGameEndingDataBuilder().netherFortressFinder(player.getName());
                         }
                     }
-
                     if(environment != World.Environment.NORMAL){
                         Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(player);
                         if(role.isPresent()){
