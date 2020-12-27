@@ -21,6 +21,7 @@ public final class MineHunt extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        saveDefaultConfig();
         instance = this;
         game = new Game();
         new CountDownWatcher();

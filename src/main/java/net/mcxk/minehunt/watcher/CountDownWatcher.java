@@ -25,6 +25,8 @@ public class CountDownWatcher {
                 if(game.getInGamePlayers().size() < game.getMinPlayers()){
                     game.getInGamePlayers().forEach(p -> p.sendTitle(ChatColor.AQUA+""+game.getInGamePlayers().size()+" "+ChatColor.WHITE+"/ "+ChatColor.AQUA+game.getMinPlayers(),
                             "正在等待更多玩家加入游戏....",0,40,0));
+                    remains = MineHunt.getInstance().getGame().getCountdown();
+                    return;
                 }else{
                     game.getInGamePlayers().forEach(p -> p.sendTitle(ChatColor.GOLD.toString()+remains,
                             "游戏即将开始...",0,40,0));

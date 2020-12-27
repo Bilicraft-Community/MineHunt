@@ -38,7 +38,6 @@ public class GameProgressManager {
                 Bukkit.broadcastMessage("新的游戏阶段已解锁 ["+progress.name()+"]，奖励已发送至所有玩家背包，药水效果已向所有人应用！");
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.IRON_ORE,8)));
                 plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION,600,1)));
-
                 break;
             case COMPASS_UNLOCKED:
             case ENTER_NETHER:

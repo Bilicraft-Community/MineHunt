@@ -30,7 +30,7 @@ public class RadarWatcher {
                         }
                         double distance = hunter.getLocation().distance(runner.getLocation());
                         TextComponent textComponent;
-                        if(distance < warnDistance){
+                        if(distance > warnDistance){
                             textComponent = new TextComponent("50m 内未检测到任何猎人");
                             textComponent.setColor(ChatColor.GREEN);
                         }else{

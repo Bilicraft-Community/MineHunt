@@ -102,6 +102,9 @@ public class Game {
 
     public void playerLeaving(Player player) {
         this.reconnectTimer.put(player, System.currentTimeMillis());
+        if(status == GameStatus.WAITING_PLAYERS){
+            this.inGamePlayers.remove(player);
+        }
     }
 
     public void playerLeft(Player player) {
@@ -138,7 +141,7 @@ public class Game {
             runners = runnerMax;
         }
 
-        for (int i = 0; i < runnerMax; i++) {
+        for (int i = 0; i < runners; i++) {
             Player selected = noRolesPlayers.get(random.nextInt(noRolesPlayers.size()));
             roleMapTemp.put(selected, PlayerRole.RUNNER);
             noRolesPlayers.remove(selected);
