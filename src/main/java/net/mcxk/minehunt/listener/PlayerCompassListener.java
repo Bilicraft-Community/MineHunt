@@ -59,7 +59,7 @@ public class PlayerCompassListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void clickCompass(PlayerInteractEvent event){
-        if(event.getAction() != Action.RIGHT_CLICK_AIR || event.getAction() != Action.RIGHT_CLICK_BLOCK){
+        if(event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK){
             return;
         }
         if(event.getItem() == null || event.getItem().getType() != Material.COMPASS){
