@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerInteractListener implements Listener {
@@ -21,7 +22,14 @@ public class PlayerInteractListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void clickXJB(EntityDamageEvent event){
+    public void damageXJB(EntityDamageEvent event){
+        if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void runXJB(FoodLevelChangeEvent event){
         if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
             event.setCancelled(true);
         }
