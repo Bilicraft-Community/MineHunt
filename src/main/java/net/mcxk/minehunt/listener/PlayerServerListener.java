@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerServerListener implements Listener {
-    private MineHunt plugin;
+    private final MineHunt plugin = MineHunt.getInstance();
     @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
     public void join(PlayerJoinEvent event){
         if(plugin.getGame().getStatus() == GameStatus.WAITING_PLAYERS){
