@@ -177,7 +177,7 @@ public class Game {
     }
     private final Map<World, Difficulty> difficultyMap = new HashMap<>();
     public void switchWorldRuleForReady(boolean ready){
-        if(ready){
+        if(!ready){
             Bukkit.getWorlds().forEach(world->{
                 world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE,false);
                 world.setGameRule(GameRule.DO_MOB_SPAWNING,false);

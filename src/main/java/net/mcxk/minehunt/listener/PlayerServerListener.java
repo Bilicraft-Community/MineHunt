@@ -21,8 +21,12 @@ public class PlayerServerListener implements Listener {
                 event.getPlayer().sendMessage("当前游戏已满人，您现在处于观战状态");
             }
         }else{
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
-            event.getPlayer().sendMessage("游戏已经开始，您现在处于观战状态");
+            if(plugin.getGame().getInGamePlayers().contains(event.getPlayer())){
+                return;
+            }else{
+                event.getPlayer().setGameMode(GameMode.SPECTATOR);
+                event.getPlayer().sendMessage("游戏已经开始，您现在处于观战状态");
+            }
         }
     }
     @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
