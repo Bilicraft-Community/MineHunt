@@ -1,0 +1,4 @@
+name: MineHunt
+version: ${project.version}
+main: net.mcxk.minehunt.MineHunt
+api-version: 1.16

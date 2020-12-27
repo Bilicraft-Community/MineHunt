@@ -1,0 +1,42 @@
+package net.mcxk.minehunt.watcher;
+
+import net.mcxk.minehunt.MineHunt;
+import net.mcxk.minehunt.game.Game;
+import net.mcxk.minehunt.game.GameStatus;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitRunnable;
+
+public class CountDownWatcher {
+    int remains = MineHunt.getInstance().getGame().getCountdown();
+    int shorter = 5;
+    public CountDownWatcher(){
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                Game game = MineHunt.getInstance().getGame();
+                if(game.getStatus() != GameStatus.WAITING_PLAYERS){
+                    return;
+                }
+                if(remains <= 0){
+                    game.start();
+                    return;
+                }
+                if(game.getInGamePlayers().size() < game.getMinPlayers()){
+                    game.getInGamePlayers().forEach(p -> p.sendTitle(ChatColor.AQUA+""+game.getInGamePlayers().size()+" "+ChatColor.WHITE+"/ "+ChatColor.AQUA+game.getMinPlayers(),
+                            "正在等待更多玩家加入游戏....",0,40,0));
+                }else{
+                    game.getInGamePlayers().forEach(p -> p.sendTitle(ChatColor.GOLD.toString()+remains,
+                            "游戏即将开始...",0,40,0));
+                }
+                remains --;
+                if(game.getInGamePlayers().size() >= game.getMaxPlayers()){
+                    if(remains > shorter){
+                        remains = shorter;
+                        Bukkit.broadcastMessage("玩家到齐，倒计时缩短！");
+                    }
+                }
+            }
+        }.runTaskTimer(MineHunt.getInstance(),0,20);
+    }
+}
