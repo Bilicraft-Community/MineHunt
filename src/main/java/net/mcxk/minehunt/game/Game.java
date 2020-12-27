@@ -80,6 +80,7 @@ public class Game {
     }
 
     public boolean playerJoining(Player player) {
+        reconnectTimer.remove(player);
         if (inGamePlayers.size() < maxPlayers) {
             inGamePlayers.add(player);
             return true;
@@ -212,13 +213,13 @@ public class Game {
             Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "恭喜你们：" + hunterNames);
             getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功击败了逃亡者", 0, 2000, 0));
             getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "不幸阵亡", 0, 2000, 0));
-
         } else {
             Bukkit.broadcastMessage(ChatColor.GOLD + "胜利者：逃亡者");
             Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "恭喜你们：" + runnerNames);
             getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 2000, 0));
             getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 2000, 0));
         }
+        Bukkit.getOnlinePlayers().stream().filter(p->!inGamePlayers.contains(p)).forEach(p->p.sendTitle(ChatColor.RED + "游戏结束", "The End", 0, 2000, 0));
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -301,23 +302,23 @@ public class Game {
         int sleep = (int) maxCanCost;
 
         if (StringUtils.isNotBlank(gameEndingData.getDragonKiller())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇士", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇士", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
             Bukkit.broadcastMessage("逃亡者的梦想终于实现了！");
             Thread.sleep(sleep);
         }
 
         if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.RED+"逃亡者的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.RED+"逃亡者的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
             Bukkit.broadcastMessage("又一位逃亡者败在了这里...");
             Thread.sleep(sleep);
         }
 
         if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getDamageReceive())) {
-            inGamePlayers.forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
         inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));

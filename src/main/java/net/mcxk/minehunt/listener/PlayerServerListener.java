@@ -2,6 +2,8 @@ package net.mcxk.minehunt.listener;
 
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.game.GameStatus;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,6 +24,7 @@ public class PlayerServerListener implements Listener {
             }
         }else{
             if(plugin.getGame().getInGamePlayers().contains(event.getPlayer())){
+                Bukkit.broadcastMessage(ChatColor.GREEN+"玩家 "+event.getPlayer().getName()+" 已重新连接");
                 return;
             }else{
                 event.getPlayer().setGameMode(GameMode.SPECTATOR);

@@ -30,6 +30,9 @@ public class GameWinnerListener implements Listener {
                 String killer = event.getDeathMessage();
                 if(event.getEntity().getLastDamageCause() != null){
                    killer = event.getEntity().getLastDamageCause().getEntity().getName();
+                   if(killer.equals(event.getEntity().getName())){
+                       killer = event.getDeathMessage();
+                   }
                 }
                 plugin.getGame().getGameEndingData().setRunnerKiller(killer);
                 plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
