@@ -48,7 +48,7 @@ public class Game {
 
     public Game(){
         fixConfig();
-        new CountDownWatcher();
+
     }
 
     public void switchCompass(boolean unlocked) {

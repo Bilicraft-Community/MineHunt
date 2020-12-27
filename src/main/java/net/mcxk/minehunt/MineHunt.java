@@ -3,6 +3,7 @@ package net.mcxk.minehunt;
 import lombok.Getter;
 import net.mcxk.minehunt.game.Game;
 import net.mcxk.minehunt.listener.*;
+import net.mcxk.minehunt.watcher.CountDownWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +21,9 @@ public final class MineHunt extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        instance = this;
         game = new Game();
+        new CountDownWatcher();
         game.switchWorldRuleForReady(false);
         Bukkit.getPluginManager().registerEvents(new PlayerServerListener(),this);
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(),this);
