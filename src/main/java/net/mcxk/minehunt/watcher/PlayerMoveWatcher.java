@@ -19,7 +19,8 @@ public class PlayerMoveWatcher {
             @Override
             public void run() {
                 MineHunt.getInstance().getGame().getInGamePlayers().forEach(player -> {
-                    if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+                    World.Environment environment = player.getWorld().getEnvironment();
+                    if(environment == World.Environment.NORMAL) {
                         Location location = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.STRONGHOLD, 1, false);
                         if (location != null) {
                             MineHunt.getInstance().getGame().getProgressManager().unlockProgress(GameProgress.FIND_STRONG_HOLD);
@@ -27,7 +28,7 @@ public class PlayerMoveWatcher {
                             return;
                         }
                     }
-                    if(player.getWorld().getEnvironment() == World.Environment.NETHER) {
+                    if(environment == World.Environment.NETHER) {
                         Location location = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.NETHER_FORTRESS, 1, false);
                         if (location != null) {
                             MineHunt.getInstance().getGame().getProgressManager().unlockProgress(GameProgress.FIND_NETHER_FORTRESS);
@@ -35,15 +36,15 @@ public class PlayerMoveWatcher {
                         }
                     }
 
-                    if(player.getWorld().getEnvironment() != World.Environment.NORMAL){
+                    if(environment != World.Environment.NORMAL){
                         Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(player);
                         if(role.isPresent()){
                             if(role.get() == PlayerRole.RUNNER){
-                                if(!runnerNether && player.getWorld().getEnvironment() == World.Environment.NETHER){
+                                if(!runnerNether && environment == World.Environment.NETHER){
                                     runnerNether = true;
                                     Bukkit.broadcastMessage("逃亡者已到达 下界 维度！");
                                 }
-                                if(!runnerTheEnd && player.getWorld().getEnvironment() == World.Environment.THE_END){
+                                if(!runnerTheEnd && environment == World.Environment.THE_END){
                                     runnerNether = true;
                                     Bukkit.broadcastMessage("逃亡者已到达 末地 维度！");
                                 }
