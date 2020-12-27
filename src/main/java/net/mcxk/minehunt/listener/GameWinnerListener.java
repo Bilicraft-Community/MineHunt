@@ -31,7 +31,7 @@ public class GameWinnerListener implements Listener {
                 if(event.getEntity().getLastDamageCause() != null){
                    killer = event.getEntity().getLastDamageCause().getEntity().getName();
                 }
-                plugin.getGame().getGameEndingDataBuilder().runnerKiller(killer);
+                plugin.getGame().getGameEndingData().setRunnerKiller(killer);
                 plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
             }
         }
@@ -82,7 +82,7 @@ public class GameWinnerListener implements Listener {
         if(event.getEntityType() != EntityType.ENDER_DRAGON){
             return;
         }
-        plugin.getGame().getGameEndingDataBuilder().dragonKiller(dragonKiller);
+        plugin.getGame().getGameEndingData().setDragonKiller(dragonKiller);
         plugin.getGame().stop(PlayerRole.RUNNER, new Location(event.getEntity().getLocation().getWorld(),0,85,0));
     }
 }

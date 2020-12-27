@@ -44,7 +44,7 @@ public class Game {
     private final GameProgressManager progressManager = new GameProgressManager();
 
     @Getter
-    private final GameEndingData.GameEndingDataBuilder gameEndingDataBuilder = GameEndingData.builder();
+    private final GameEndingData gameEndingData = new GameEndingData();
 
     public Game(){
         fixConfig();
@@ -208,14 +208,14 @@ public class Game {
         if (winner == PlayerRole.HUNTER) {
             Bukkit.broadcastMessage(ChatColor.GOLD + "胜利者：猎人");
             Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "恭喜你们：" + hunterNames);
-            getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功击败了逃亡者", 0, 200, 0));
-            getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "不幸阵亡", 0, 200, 0));
+            getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功击败了逃亡者", 0, 2000, 0));
+            getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "不幸阵亡", 0, 2000, 0));
 
         } else {
             Bukkit.broadcastMessage(ChatColor.GOLD + "胜利者：逃亡者");
             Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "恭喜你们：" + runnerNames);
-            getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 200, 0));
-            getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 200, 0));
+            getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 2000, 0));
+            getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 2000, 0));
         }
         new BukkitRunnable() {
             @Override
@@ -238,9 +238,9 @@ public class Game {
                     }
                 }
                 if (mostOutput != null) {
-                    gameEndingDataBuilder.damageOutput(mostOutput.getName() + " - " + damage);
+                    getGameEndingData().setDamageOutput(mostOutput.getName() + " - " + damage);
                 } else {
-                    gameEndingDataBuilder.damageOutput("Error");
+                    getGameEndingData().setDamageOutput("Error");
                 }
 
 
@@ -260,9 +260,9 @@ public class Game {
                     }
                 }
                 if (mostDamageReceiver != null) {
-                    gameEndingDataBuilder.damageOutput(mostDamageReceiver.getName() + " - " + received);
+                    getGameEndingData().setDamageReceive(mostDamageReceiver.getName() + " - " + received);
                 } else {
-                    gameEndingDataBuilder.damageOutput("Error");
+                    getGameEndingData().setDamageReceive("Error");
                 }
 
                 new BukkitRunnable() {
@@ -285,21 +285,20 @@ public class Game {
     @SneakyThrows
     private void sendEndingAnimation() {
         double maxCanCost = 20000d;
-        GameEndingData data = gameEndingDataBuilder.build();
         int needShows = 0;
-        if (StringUtils.isNotBlank(data.getDamageOutput())) {
+        if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(data.getDragonKiller())) {
+        if (StringUtils.isNotBlank(gameEndingData.getDragonKiller())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(data.getDamageReceive())) {
+        if (StringUtils.isNotBlank(gameEndingData.getDamageReceive())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(data.getStoneAgePassed())) {
+        if (StringUtils.isNotBlank(gameEndingData.getStoneAgePassed())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(data.getRunnerKiller())) {
+        if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
             needShows++;
         }
         maxCanCost /= needShows;
@@ -307,26 +306,26 @@ public class Game {
         int sleep = (int) maxCanCost;
 
 
-        if (StringUtils.isNotBlank(data.getDragonKiller())) {
-            inGamePlayers.forEach(p->p.sendTitle("屠龙勇者", data.getDragonKiller(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(gameEndingData.getDragonKiller())) {
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇者", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
 
-        if (StringUtils.isNotBlank(data.getRunnerKiller())) {
-            inGamePlayers.forEach(p->p.sendTitle("逃亡者的噩梦", data.getRunnerKiller(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.RED+"逃亡者的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
 
-        if (StringUtils.isNotBlank(data.getDamageOutput())) {
-            inGamePlayers.forEach(p->p.sendTitle("最佳伤害输出", data.getDamageOutput(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
-        if (StringUtils.isNotBlank(data.getDamageReceive())) {
-            inGamePlayers.forEach(p->p.sendTitle("最惨怪物标靶", data.getDamageReceive(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(gameEndingData.getDamageReceive())) {
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
-        if (StringUtils.isNotBlank(data.getStoneAgePassed())) {
-            inGamePlayers.forEach(p->p.sendTitle("文明的第一步", data.getStoneAgePassed(),0 ,20000 ,0 ));
+        if (StringUtils.isNotBlank(gameEndingData.getStoneAgePassed())) {
+            inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"文明的第一步", gameEndingData.getStoneAgePassed(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
 
