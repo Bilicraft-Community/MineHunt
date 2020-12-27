@@ -325,6 +325,8 @@ public class Game {
         inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"星空物语", "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
         Thread.sleep((long)sleep/2);
 
+        inGamePlayers.forEach(Player::resetTitle);
+
         Bukkit.shutdown();
     }
 

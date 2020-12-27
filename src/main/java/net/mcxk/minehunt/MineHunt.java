@@ -31,6 +31,7 @@ public final class MineHunt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerCompassListener(),this);
         Bukkit.getPluginManager().registerEvents(new ProgressDetectingListener(),this);
         Bukkit.getPluginManager().registerEvents(new GameWinnerListener(),this);
+        Bukkit.getPluginManager().registerEvents(new ChatListener(),this);
     }
 
     @Override
