@@ -3,8 +3,10 @@ package net.mcxk.minehunt.listener;
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -37,13 +39,23 @@ public class GameWinnerListener implements Listener {
 
     private String dragonKiller = "Magic";
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void entityDeath(EntityDamageByEntityEvent event){
         if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
             return;
         }
         if(event.getEntityType() != EntityType.ENDER_DRAGON){
             return;
+        }
+        if(event.getDamager() instanceof Player){
+            Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(((Player) event.getDamager()));
+            if(role.isPresent()){
+                if(role.get() == PlayerRole.HUNTER){
+                    event.setCancelled(true);
+                    event.getEntity().sendMessage(ChatColor.RED+"猎人是末影龙的好伙伴，你不可以对龙造成伤害！");
+                    return;
+                }
+            }
         }
         dragonKiller = event.getDamager().getName();
     }
