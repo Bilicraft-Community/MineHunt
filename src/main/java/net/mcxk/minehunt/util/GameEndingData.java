@@ -13,9 +13,7 @@ public class GameEndingData {
     private String runnerKiller;
     private String stoneAgePassed;
     private String walkMaster;
-    private String craftMaster;
     private String jumpMaster;
-    private String widgetMaster;
     private String killingGod;
 
 

@@ -26,16 +26,6 @@ public class StatisticsBaker {
         return result.getKey() + " 旅行了 " + result.getValue().intValue() + " 米";
     }
 
-    public String getCraftingMaster() {
-        Map.Entry<String, Double> result = getHighest(Statistic.CRAFT_ITEM);
-        return result.getKey() + " 合成了 " + result.getValue().intValue() + " 个物品";
-    }
-
-    public String getWidgetMaster() {
-        Map.Entry<String, Double> result = getHighest(Statistic.USE_ITEM);
-        return result.getKey() + " 使用了 " + result.getValue().intValue() + " 次各种物品";
-    }
-
     public String getKillingMaster() {
         Map.Entry<String, Double> result = getHighest(Statistic.KILL_ENTITY);
         return result.getValue().intValue() + " 只怪物倒在了 " + result.getKey() + " 的手下";
