@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Optional;
 
@@ -34,8 +35,15 @@ public class GameWinnerListener implements Listener {
                        killer = event.getDeathMessage();
                    }
                 }
-                plugin.getGame().getGameEndingData().setRunnerKiller(killer);
-                plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
+                event.getEntity().spigot().respawn();
+                String finalKiller = killer;
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        plugin.getGame().getGameEndingData().setRunnerKiller(finalKiller);
+                        plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
+                    }
+                }.runTaskLater(plugin,1);re
             }
         }
     }

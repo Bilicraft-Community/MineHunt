@@ -26,9 +26,9 @@ public class MusicPlayer {
 //            Bukkit.getOnlinePlayers().forEach(rsp::addPlayer);
 //            rsp.setPlaying(true);
 //        }
-        Bukkit.getOnlinePlayers().forEach(p->{
-            if(p.isDead()){p.spigot().respawn();}
-        });
+//        Bukkit.getOnlinePlayers().forEach(p->{
+//            if(p.isDead()){p.spigot().respawn();}
+//        });
         new BukkitRunnable(){
             @Override
             public void run() {

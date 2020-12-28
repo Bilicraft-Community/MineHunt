@@ -43,13 +43,6 @@ public class StatisticsBaker {
         }
         return "生命不息，空格不停 " + result.getKey() + " 共跳跃了 " + result.getValue().intValue() + " 次";
     }
-    public String getTeamMatesEnemy() {
-        Map.Entry<String, Double> result = getHighest(Statistic.JUMP);
-        if(result.getValue() == 0.0d){
-            return "";
-        }
-        return "生命不息，空格不停 " + result.getKey() + " 共跳跃了 " + result.getValue().intValue() + " 次";
-    }
 
     public String getTeamBadGuy(){
         Player maxPlayer = null;

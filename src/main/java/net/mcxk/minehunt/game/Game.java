@@ -300,7 +300,7 @@ public class Game {
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.YELLOW+"大探险家", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.YELLOW+"大探险家", gameEndingData.getWalkMaster(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getJumpMaster())) {
