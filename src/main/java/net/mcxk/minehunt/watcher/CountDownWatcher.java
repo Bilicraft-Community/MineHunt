@@ -5,6 +5,7 @@ import net.mcxk.minehunt.game.Game;
 import net.mcxk.minehunt.game.GameStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CountDownWatcher {
@@ -28,8 +29,10 @@ public class CountDownWatcher {
                     remains = MineHunt.getInstance().getGame().getCountdown();
                     return;
                 }else{
-                    game.getInGamePlayers().forEach(p -> p.sendTitle(ChatColor.GOLD.toString()+remains,
-                            "游戏即将开始...",0,40,0));
+                    game.getInGamePlayers().forEach(p -> {p.sendTitle(ChatColor.GOLD.toString()+remains,
+                            "游戏即将开始...",0,40,0);
+                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_LAUNCH,1.0f,1.0f);
+                    });
                 }
                 remains --;
                 if(game.getInGamePlayers().size() >= game.getMaxPlayers()){
