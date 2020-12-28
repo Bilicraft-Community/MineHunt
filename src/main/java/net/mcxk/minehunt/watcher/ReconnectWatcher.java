@@ -26,6 +26,9 @@ public class ReconnectWatcher {
                 //Prevent memory leaking
                 removing.forEach(player -> {
                     plugin.getGame().getReconnectTimer().remove(player);
+                    if(player.isOnline()){
+                        return;
+                    }
                     plugin.getGame().playerLeft(player);
                 });
             }

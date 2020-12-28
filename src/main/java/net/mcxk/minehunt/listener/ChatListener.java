@@ -22,7 +22,6 @@ public class ChatListener implements Listener {
             event.setFormat(ChatColor.GREEN+"[OBSERVER] "+event.getPlayer().getDisplayName()+" "+event.getMessage());
             return;        }
 
-
         if(event.getMessage().startsWith("#")){
             event.setCancelled(true);
             if(role.get() == PlayerRole.HUNTER){
