@@ -205,7 +205,8 @@ public class Game {
     public void stop(PlayerRole winner, Location location) {
         this.inGamePlayers.stream().filter(Player::isOnline).forEach(player -> {
             player.setGameMode(GameMode.SPECTATOR);
-            player.teleport(location);
+            player.teleport(location.clone().add(0,3,0));
+            player.teleport(Util.lookAt(player.getEyeLocation(),location));
         });
         this.status = GameStatus.ENDED;
         Bukkit.broadcastMessage(ChatColor.YELLOW + "游戏结束! 服务器将在30秒后重新启动！");
