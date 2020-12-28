@@ -32,7 +32,7 @@ public class ChatListener implements Listener {
             if(role.get() == PlayerRole.HUNTER){
                 event.setFormat(ChatColor.RED+"[HUNTER] "+event.getPlayer().getDisplayName()+" "+ChatColor.RESET+event.getMessage());
             }else if(role.get() == PlayerRole.RUNNER){
-                event.setFormat(ChatColor.GREEN+"[HUNTER] "+event.getPlayer().getDisplayName()+" "+ChatColor.RESET+event.getMessage());
+                event.setFormat(ChatColor.GREEN+"[RUNNER] "+event.getPlayer().getDisplayName()+" "+ChatColor.RESET+event.getMessage());
             }
         }
     }

@@ -48,6 +48,8 @@ public class Game {
     @Getter
     private final GameEndingData gameEndingData = new GameEndingData();
 
+    @Getter final Map<Player, Double> teamDamageData = new HashMap<>();
+
     public Game(){
         fixConfig();
 
@@ -232,8 +234,8 @@ public class Game {
                 getGameEndingData().setDamageOutput(baker.getDamageMaster());
                 getGameEndingData().setDamageReceive(baker.getDamageTakenMaster());
                 getGameEndingData().setWalkMaster(baker.getWalkingMaster());
-                getGameEndingData().setKillingGod(baker.getKillingMaster());
                 getGameEndingData().setJumpMaster(baker.getJumpMaster());
+                getGameEndingData().setTeamKiller(baker.getTeamBadGuy());
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -263,9 +265,6 @@ public class Game {
         if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
             needShows++;
         }
-        if (StringUtils.isNotBlank(gameEndingData.getKillingGod())) {
-            needShows++;
-        }
         if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
             needShows++;
         }
@@ -288,11 +287,6 @@ public class Game {
             Thread.sleep(sleep);
         }
 
-        if (StringUtils.isNotBlank(gameEndingData.getKillingGod())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.RED+"怪物猎手", gameEndingData.getKillingGod(),0 ,20000 ,0 ));
-            Thread.sleep(sleep);
-        }
-
         if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
             Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
@@ -301,12 +295,16 @@ public class Game {
             Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
+        if (StringUtils.isNotBlank(gameEndingData.getTeamKiller())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.DARK_RED+"队友杀手", gameEndingData.getTeamKiller(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
         if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"大探险家", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.YELLOW+"大探险家", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getJumpMaster())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"CS:GO玩家", gameEndingData.getJumpMaster(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GRAY+"CS:GO玩家", gameEndingData.getJumpMaster(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
         inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
