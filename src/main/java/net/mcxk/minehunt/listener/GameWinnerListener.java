@@ -43,7 +43,7 @@ public class GameWinnerListener implements Listener {
                         plugin.getGame().getGameEndingData().setRunnerKiller(finalKiller);
                         plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
                     }
-                }.runTaskLater(plugin,1);re
+                }.runTaskLater(plugin,1);
             }
         }
     }
