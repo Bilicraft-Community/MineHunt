@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.util.GameEndingData;
+import net.mcxk.minehunt.util.MusicPlayer;
+import net.mcxk.minehunt.util.StatisticsBaker;
 import net.mcxk.minehunt.util.Util;
 import net.mcxk.minehunt.watcher.CountDownWatcher;
 import net.mcxk.minehunt.watcher.PlayerMoveWatcher;
@@ -219,55 +221,22 @@ public class Game {
             getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 2000, 0));
             getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 2000, 0));
         }
+        new MusicPlayer().playEnding();
         Bukkit.getOnlinePlayers().stream().filter(p->!inGamePlayers.contains(p)).forEach(p->p.sendTitle(ChatColor.RED + "游戏结束", "The End", 0, 2000, 0));
         new BukkitRunnable() {
             @Override
             public void run() {
                 //开始结算阶段
-
+            StatisticsBaker baker = new StatisticsBaker();
                 //计算输出最多的玩家
-                Player mostOutput = null;
-                double damage = 0.0d;
-                for (Player player : getInGamePlayers()) {
-                    if (mostOutput == null) {
-                        mostOutput = player;
-                        damage = player.getStatistic(Statistic.DAMAGE_DEALT);
-                        continue;
-                    }
-                    double newDamage = player.getStatistic(Statistic.DAMAGE_DEALT);
-                    if (newDamage > damage) {
-                        mostOutput = player;
-                        damage = newDamage;
-                    }
-                }
-                if (mostOutput != null) {
-                    getGameEndingData().setDamageOutput(mostOutput.getName() + " - " + damage);
-                } else {
-                    getGameEndingData().setDamageOutput("Error");
-                }
-
-
-                //计算受到伤害最多的玩家
-                Player mostDamageReceiver = null;
-                double received = 0.0d;
-                for (Player player : getInGamePlayers()) {
-                    if (mostDamageReceiver == null) {
-                        mostDamageReceiver = player;
-                        received = player.getStatistic(Statistic.DAMAGE_TAKEN);
-                        continue;
-                    }
-                    double newReceived = player.getStatistic(Statistic.DAMAGE_TAKEN);
-                    if (newReceived > received) {
-                        mostDamageReceiver = player;
-                        received = newReceived;
-                    }
-                }
-                if (mostDamageReceiver != null) {
-                    getGameEndingData().setDamageReceive(mostDamageReceiver.getName() + " - " + received);
-                } else {
-                    getGameEndingData().setDamageReceive("Error");
-                }
-
+                getGameEndingData().setDamageOutput(baker.getDamageMaster());
+                getGameEndingData().setDamageReceive(baker.getDamageTakenMaster());
+                getGameEndingData().setWalkMaster(baker.getWalkingMaster());
+                getGameEndingData().setCraftMaster(baker.getCraftingMaster());
+                getGameEndingData().setJumpMaster(baker.getJumpMaster());
+                getGameEndingData().setWidgetMaster(baker.getWidgetMaster());
+                getGameEndingData().setWidgetMaster(baker.getWidgetMaster());
+                getGameEndingData().setKillingGod(baker.getKillingMaster());
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -297,6 +266,21 @@ public class Game {
         if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
             needShows++;
         }
+        if (StringUtils.isNotBlank(gameEndingData.getKillingGod())) {
+            needShows++;
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getCraftMaster())) {
+            needShows++;
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getWidgetMaster())) {
+            needShows++;
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
+            needShows++;
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getJumpMaster())) {
+            needShows++;
+        }
         maxCanCost /= needShows;
 
         int sleep = (int) maxCanCost;
@@ -312,6 +296,10 @@ public class Game {
             Bukkit.broadcastMessage("又一位逃亡者败在了这里...");
             Thread.sleep(sleep);
         }
+        if (StringUtils.isNotBlank(gameEndingData.getKillingGod())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.RED+"怪物的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
 
         if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
             Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
@@ -321,10 +309,26 @@ public class Game {
             Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
+        if (StringUtils.isNotBlank(gameEndingData.getCraftMaster())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"合成爱好者", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getWidgetMaster())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"道具之神", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"大探险家", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
+        if (StringUtils.isNotBlank(gameEndingData.getJumpMaster())) {
+            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"CS:GO玩家", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Thread.sleep(sleep);
+        }
         inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
-        Thread.sleep((long)sleep/2);
+        Thread.sleep(sleep);
         inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"星空物语", "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
-        Thread.sleep((long)sleep/2);
+        Thread.sleep(sleep);
 
         inGamePlayers.forEach(Player::resetTitle);
 

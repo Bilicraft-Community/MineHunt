@@ -20,6 +20,8 @@ public class CountDownWatcher {
                     return;
                 }
                 if(remains <= 0){
+                    game.getInGamePlayers().forEach(p ->
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1.0f,1.0f));
                     game.start();
                     return;
                 }
@@ -31,7 +33,7 @@ public class CountDownWatcher {
                 }else{
                     game.getInGamePlayers().forEach(p -> {p.sendTitle(ChatColor.GOLD.toString()+remains,
                             "游戏即将开始...",0,40,0);
-                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_LAUNCH,1.0f,1.0f);
+                        p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_FAIL,1.0f,1.0f);
                     });
                 }
                 remains --;
