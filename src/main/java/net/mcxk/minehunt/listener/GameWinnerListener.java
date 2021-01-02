@@ -4,6 +4,7 @@ import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.net.ssl.SSLProtocolException;
 import java.util.Optional;
 
 public class GameWinnerListener implements Listener {
@@ -40,7 +42,11 @@ public class GameWinnerListener implements Listener {
                     @Override
                     public void run() {
                         plugin.getGame().getGameEndingData().setRunnerKiller(finalKiller);
-                        plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
+                        event.getEntity().setGameMode(GameMode.SPECTATOR);
+                        if(plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER).stream().allMatch(p->p.getGameMode()==GameMode.SPECTATOR)){
+                            plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0,3,0));
+                        }
+
                     }
                 }.runTaskLater(plugin,1);
             }

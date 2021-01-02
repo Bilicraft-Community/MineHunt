@@ -31,6 +31,7 @@ public class Game {
     @Getter
     @Setter
     private GameStatus status = GameStatus.WAITING_PLAYERS;
+    @Getter
     private Map<Player, PlayerRole> roleMapping; //线程安全
     @Getter
     private int maxPlayers = plugin.getConfig().getInt("max-players");
