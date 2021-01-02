@@ -35,7 +35,6 @@ public class GameWinnerListener implements Listener {
                        killer = event.getDeathMessage();
                    }
                 }
-                event.getEntity().spigot().respawn();
                 String finalKiller = killer;
                 new BukkitRunnable(){
                     @Override
