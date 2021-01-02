@@ -25,6 +25,7 @@ public class PlayerServerListener implements Listener {
         }else{
             if(plugin.getGame().getInGamePlayers().contains(event.getPlayer())){
                 Bukkit.broadcastMessage(ChatColor.GREEN+"玩家 "+event.getPlayer().getName()+" 已重新连接");
+                plugin.getGame().getReconnectTimer().remove(event.getPlayer());
                 return;
             }else{
                 event.getPlayer().setGameMode(GameMode.SPECTATOR);
@@ -33,7 +34,7 @@ public class PlayerServerListener implements Listener {
         }
     }
     @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
-    public void join(PlayerQuitEvent event){
+    public void quit(PlayerQuitEvent event){
         if(!plugin.getGame().getInGamePlayers().contains(event.getPlayer())){
             return;
         }
