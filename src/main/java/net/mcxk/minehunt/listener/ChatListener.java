@@ -19,7 +19,7 @@ public class ChatListener implements Listener {
         }
         Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(event.getPlayer());
         if(!role.isPresent()){
-            event.setFormat(ChatColor.GREEN+"[OBSERVER] "+event.getPlayer().getDisplayName()+" "+event.getMessage());
+            event.setFormat(ChatColor.GRAY+"[OBSERVER] "+event.getPlayer().getDisplayName()+" "+event.getMessage());
             return;        }
 
         if(event.getMessage().startsWith("#")){
