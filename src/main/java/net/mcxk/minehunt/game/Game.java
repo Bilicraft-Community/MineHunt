@@ -107,9 +107,10 @@ public class Game {
     }
 
     public void playerLeaving(Player player) {
-        this.reconnectTimer.put(player, System.currentTimeMillis());
         if(status == GameStatus.WAITING_PLAYERS){
             this.inGamePlayers.remove(player);
+        }else{
+            this.reconnectTimer.put(player, System.currentTimeMillis());
         }
     }
 
@@ -319,13 +320,12 @@ public class Game {
             Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GRAY+"CS:GO玩家", gameEndingData.getJumpMaster(),0 ,20000 ,0 ));
             Thread.sleep(sleep);
         }
-        inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
-        Thread.sleep(sleep);
-        inGamePlayers.forEach(p->p.sendTitle(ChatColor.GREEN+"星空物语", "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
-        Thread.sleep(sleep);
 
-        inGamePlayers.forEach(Player::resetTitle);
-
+        Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
+        Thread.sleep(sleep);
+        Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GREEN+"星空物语", "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
+        Thread.sleep(sleep);
+        Bukkit.getOnlinePlayers().forEach(Player::resetTitle);
         Bukkit.shutdown();
     }
 

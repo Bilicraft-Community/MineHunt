@@ -46,4 +46,9 @@ public class CountDownWatcher {
             }
         }.runTaskTimer(MineHunt.getInstance(),0,20);
     }
+
+    public void resetCountdown(){
+        this.remains = MineHunt.getInstance().getGame().getCountdown();
+        Bukkit.broadcastMessage("倒计时已被重置");
+    }
 }
