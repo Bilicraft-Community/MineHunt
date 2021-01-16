@@ -32,7 +32,7 @@ public class CountDownWatcher {
                     return;
                 }else{
                     game.getInGamePlayers().forEach(p -> {p.sendTitle(ChatColor.GOLD.toString()+remains,
-                            "游戏即将开始...",0,40,0);
+                            "游戏即将开始... ["+game.getInGamePlayers().size()+"/"+game.getMaxPlayers()+"]",0,40,0);
                         p.playSound(p.getLocation(), Sound.BLOCK_DISPENSER_FAIL,1.0f,1.0f);
                     });
                 }

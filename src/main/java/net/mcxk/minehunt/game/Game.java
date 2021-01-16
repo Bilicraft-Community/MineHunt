@@ -160,7 +160,8 @@ public class Game {
         noRolesPlayers.forEach(p -> roleMapTemp.put(p, PlayerRole.HUNTER));
         this.roleMapping = new ConcurrentHashMap<>(roleMapTemp);
         Bukkit.broadcastMessage("正在将逃亡者随机传送到远离猎人的位置...");
-        getPlayersAsRole(PlayerRole.RUNNER).forEach(this::airDrop);
+        Location airDropLoc = airDrop(getPlayersAsRole(PlayerRole.RUNNER).get(0).getWorld().getSpawnLocation());
+        getPlayersAsRole(PlayerRole.RUNNER).forEach(runner->runner.teleport(airDropLoc));
         getPlayersAsRole(PlayerRole.HUNTER).forEach(p->p.teleport(p.getWorld().getSpawnLocation()));
         Bukkit.broadcastMessage("设置游戏规则...");
         inGamePlayers.forEach(p->{
@@ -337,14 +338,14 @@ public class Game {
     }
 
     //Code from ManHunt
-    private void airDrop(Player runner) {
-        Location loc = runner.getLocation();
+    private Location airDrop(Location spawnpoint) {
+        Location loc = spawnpoint.clone();
         loc = new Location(loc.getWorld(), loc.getBlockX(), 0, loc.getBlockZ());
         Random random = new Random();
         loc.add(random.nextInt(200) + 100, 0, random.nextInt(200) + 100);
         loc = loc.getWorld().getHighestBlockAt(loc).getLocation();
         loc.getBlock().setType(Material.GLASS);
         loc.setY(loc.getY() + 1);
-        runner.teleport(loc);
+        return loc;
     }
 }
