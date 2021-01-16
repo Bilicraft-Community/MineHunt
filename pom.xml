@@ -88,13 +88,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.koca2000</groupId>
-            <artifactId>NoteBlockAPI</artifactId>
-            <version>LOCAL</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/NoteBlockAPI-1.6.1.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>Jumper251</groupId>
             <artifactId>AdvancedReplay</artifactId>
             <version>LOCAL</version>

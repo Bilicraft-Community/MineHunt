@@ -42,6 +42,7 @@ public final class MineHunt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ProgressDetectingListener(),this);
         Bukkit.getPluginManager().registerEvents(new GameWinnerListener(),this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(),this);
+        getLogger().info("");
     }
 
     @Override
@@ -51,12 +52,21 @@ public final class MineHunt extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!sender.hasPermission("minehunt.admin")){
-            return false;
-        }
         if(args.length < 1){
             return false;
         }
+
+        //禁止删除本行版权声明
+        if(args[0].equalsIgnoreCase("copyright")){
+            sender.sendMessage("Copyright - Minecraft of gamerteam. 版权所有.");
+            return true;
+        }
+
+
+        if(!sender.hasPermission("minehunt.admin")){
+            return false;
+        }
+
         //不安全命令 完全没做检查，确认你会用再执行
         if(args[0].equalsIgnoreCase("hunter") || args[0].equalsIgnoreCase("runner")) {
             Player player = (Player) sender;
@@ -75,7 +85,10 @@ public final class MineHunt extends JavaPlugin {
             return true;
         }
         if(args[0].equalsIgnoreCase("forcestart") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS){
-            this.getCountDownWatcher().resetCountdown();
+            if(this.getGame().getInGamePlayers().size() < 2){
+                sender.sendMessage("错误：至少有2名玩家才可以强制开始游戏");
+                return true;
+            }
             return true;
         }
 

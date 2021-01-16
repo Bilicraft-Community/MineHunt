@@ -8,9 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,6 +17,11 @@ import java.util.Set;
 public class GameProgressManager {
     private final MineHunt plugin = MineHunt.getInstance();
     private final Set<GameProgress> unlocked = new HashSet<>();
+
+    /**
+     * 检查和解锁新的游戏进度
+     * @param progress 游戏进度
+     */
     public void unlockProgress(GameProgress progress){
         if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
             return;
@@ -41,6 +44,8 @@ public class GameProgressManager {
                 plugin.getGame().getInGamePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION,600,1)));
                 break;
             case COMPASS_UNLOCKED:
+                broadcastProgress(progress,false,false);
+                break;
             case ENTER_NETHER:
                 broadcastProgress(progress,true,false);
                 plugin.getGame().getInGamePlayers().forEach(player -> player.getInventory().addItem(new ItemStack(Material.OBSIDIAN,4)));

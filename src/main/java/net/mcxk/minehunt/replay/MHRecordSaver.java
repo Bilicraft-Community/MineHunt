@@ -107,7 +107,6 @@ public class MHRecordSaver implements IReplaySaver {
         this.loadReplay(replayName, old -> {
             if (old == null) {
                 LogUtils.log("Reformatting: " + replayName);
-
                 try {
                     File file = new File(DefaultReplaySaver.DIR, replayName + ".replay");
                     FileInputStream fileIn = new FileInputStream(file);

@@ -27,6 +27,7 @@ public class PlayerServerListener implements Listener {
                 event.getPlayer().sendMessage("当前游戏已满人，您现在处于观战状态");
             }
         }else{
+            //处理玩家重连
             if (plugin.getGame().getInGamePlayers().stream().anyMatch(p->p.getUniqueId().equals(event.getPlayer().getUniqueId()))){
                plugin.getGame().getInGamePlayers().removeIf(p->p.getUniqueId().equals(event.getPlayer().getUniqueId()));
                plugin.getGame().getInGamePlayers().add(event.getPlayer());
@@ -44,6 +45,7 @@ public class PlayerServerListener implements Listener {
                     Bukkit.broadcastMessage(ChatColor.GREEN + "玩家 " + event.getPlayer().getName() + " 已重新连接");
                     plugin.getGame().getReconnectTimer().entrySet().removeIf(set->set.getKey().getUniqueId().equals(event.getPlayer().getUniqueId()));
                 }
+
             }else{
                 event.getPlayer().setGameMode(GameMode.SPECTATOR);
                 event.getPlayer().sendMessage("游戏已经开始，您现在处于观战状态");

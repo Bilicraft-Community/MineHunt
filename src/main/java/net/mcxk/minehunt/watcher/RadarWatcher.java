@@ -28,7 +28,7 @@ public class RadarWatcher {
                         if(hunter.getWorld() != runner.getWorld()){
                             continue;
                         }
-                        double distance = hunter.getLocation().distance(runner.getLocation());
+                        double distance = hunter.getLocation().distanceSquared(runner.getLocation());
                         TextComponent textComponent;
                         if(distance > warnDistance){
                             textComponent = new TextComponent("50m 内未检测到任何猎人");
