@@ -12,7 +12,10 @@ import net.mcxk.minehunt.game.Game;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -25,8 +28,8 @@ public class MHRecordSaver implements IReplaySaver {
     private ExecutorService pool = Executors.newCachedThreadPool();
 
     public MHRecordSaver(Game game) {
-        SimpleDateFormat time =new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        DIR = new File(ReplaySystem.getInstance().getDataFolder() + "/replays/"+time.format(new Date()));
+        SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        DIR = new File(ReplaySystem.getInstance().getDataFolder() + "/replays/" + time.format(new Date()));
     }
 
     public void saveReplay(Replay replay) {
@@ -63,7 +66,7 @@ public class MHRecordSaver implements IReplaySaver {
                     FileInputStream fileIn = new FileInputStream(file);
                     GZIPInputStream gIn = new GZIPInputStream(fileIn);
                     ObjectInputStream objectIn = new ObjectInputStream(gIn);
-                    ReplayData data = (ReplayData)objectIn.readObject();
+                    ReplayData data = (ReplayData) objectIn.readObject();
                     objectIn.close();
                     gIn.close();
                     fileIn.close();
@@ -111,7 +114,7 @@ public class MHRecordSaver implements IReplaySaver {
                     File file = new File(DefaultReplaySaver.DIR, replayName + ".replay");
                     FileInputStream fileIn = new FileInputStream(file);
                     ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-                    ReplayData data = (ReplayData)objectIn.readObject();
+                    ReplayData data = (ReplayData) objectIn.readObject();
                     objectIn.close();
                     fileIn.close();
                     deleteReplay(replayName);

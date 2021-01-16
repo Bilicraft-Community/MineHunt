@@ -10,17 +10,19 @@ import java.util.UUID;
 public class GameRecord {
     @Getter
     private final static UUID roundUniqueID = UUID.randomUUID();
-    public static void record(Game game){
-        if(!Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")){
+
+    public static void record(Game game) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
             return;
         }
         ReplayAPI.getInstance().registerReplaySaver(new MHRecordSaver(game));
-        ReplayAPI.getInstance().recordReplay(roundUniqueID.toString().replace("-",""),Bukkit.getConsoleSender());
+        ReplayAPI.getInstance().recordReplay(roundUniqueID.toString().replace("-", ""), Bukkit.getConsoleSender());
     }
-    public static void stop(Game game){
-        if(!Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")){
+
+    public static void stop(Game game) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
             return;
         }
-        ReplayAPI.getInstance().stopReplay(roundUniqueID.toString().replace("-",""),true);
+        ReplayAPI.getInstance().stopReplay(roundUniqueID.toString().replace("-", ""), true);
     }
 }

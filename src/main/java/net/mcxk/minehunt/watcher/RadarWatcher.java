@@ -14,26 +14,27 @@ import java.util.List;
 public class RadarWatcher {
     private final MineHunt plugin = MineHunt.getInstance();
     private final int warnDistance = 50;
-    public RadarWatcher(){
-        new BukkitRunnable(){
+
+    public RadarWatcher() {
+        new BukkitRunnable() {
             @Override
             public void run() {
-                if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+                if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
                     return;
                 }
                 List<Player> runners = plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER);
                 List<Player> hunters = plugin.getGame().getPlayersAsRole(PlayerRole.HUNTER);
-                for(Player hunter : hunters){
-                    for(Player runner : runners){
-                        if(hunter.getWorld() != runner.getWorld()){
+                for (Player hunter : hunters) {
+                    for (Player runner : runners) {
+                        if (hunter.getWorld() != runner.getWorld()) {
                             continue;
                         }
                         double distance = hunter.getLocation().distanceSquared(runner.getLocation());
                         TextComponent textComponent;
-                        if(distance > warnDistance){
+                        if (distance > warnDistance) {
                             textComponent = new TextComponent("50m 内未检测到任何猎人");
                             textComponent.setColor(ChatColor.GREEN);
-                        }else{
+                        } else {
                             textComponent = new TextComponent("!!警告!! 猎人正在靠近！(距离：%dm)".replace("%d", String.valueOf((int) distance)));
                             textComponent.setColor(ChatColor.RED);
                         }
@@ -41,6 +42,6 @@ public class RadarWatcher {
                     }
                 }
             }
-        }.runTaskTimer(MineHunt.getInstance(),0,5);
+        }.runTaskTimer(MineHunt.getInstance(), 0, 5);
     }
 }

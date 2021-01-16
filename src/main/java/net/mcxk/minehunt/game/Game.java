@@ -10,7 +10,6 @@ import net.mcxk.minehunt.util.GameEndingData;
 import net.mcxk.minehunt.util.MusicPlayer;
 import net.mcxk.minehunt.util.StatisticsBaker;
 import net.mcxk.minehunt.util.Util;
-import net.mcxk.minehunt.watcher.CountDownWatcher;
 import net.mcxk.minehunt.watcher.PlayerMoveWatcher;
 import net.mcxk.minehunt.watcher.RadarWatcher;
 import net.mcxk.minehunt.watcher.ReconnectWatcher;
@@ -25,9 +24,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Game {
+    @Getter
+    final Map<Player, Double> teamDamageData = new HashMap<>();
     private final MineHunt plugin = MineHunt.getInstance();
     @Getter
     private final Set<Player> inGamePlayers = Sets.newCopyOnWriteArraySet(); //线程安全
+    @Getter
+    private final int countdown = 30;
+    @Getter
+    private final Map<Player, Long> reconnectTimer = new HashMap<>();
+    @Getter
+    private final GameProgressManager progressManager = new GameProgressManager();
+    @Getter
+    private final GameEndingData gameEndingData = new GameEndingData();
+    private final Map<World, Difficulty> difficultyMap = new HashMap<>();
     @Getter
     @Setter
     private GameStatus status = GameStatus.WAITING_PLAYERS;
@@ -37,22 +47,11 @@ public class Game {
     private int maxPlayers = plugin.getConfig().getInt("max-players");
     @Getter
     private int minPlayers = plugin.getConfig().getInt("min-players");
-    @Getter
-    private final int countdown = 30;
     private int runnerMax = plugin.getConfig().getInt("runner-max");
     @Getter
-    private final Map<Player, Long> reconnectTimer = new HashMap<>();
-    @Getter
     private boolean compassUnlocked = false;
-    @Getter
-    private final GameProgressManager progressManager = new GameProgressManager();
 
-    @Getter
-    private final GameEndingData gameEndingData = new GameEndingData();
-
-    @Getter final Map<Player, Double> teamDamageData = new HashMap<>();
-
-    public Game(){
+    public Game() {
         fixConfig();
 
     }
@@ -93,7 +92,8 @@ public class Game {
         }
         return false;
     }
-    public void fixConfig(){
+
+    public void fixConfig() {
 //        if(runnerMax >minPlayers){
 //            runnerAmount = minPlayers -1;
 //        }
@@ -107,9 +107,9 @@ public class Game {
     }
 
     public void playerLeaving(Player player) {
-        if(status == GameStatus.WAITING_PLAYERS){
+        if (status == GameStatus.WAITING_PLAYERS) {
             this.inGamePlayers.remove(player);
-        }else{
+        } else {
             this.reconnectTimer.put(player, System.currentTimeMillis());
         }
     }
@@ -138,7 +138,7 @@ public class Game {
         if (status != GameStatus.WAITING_PLAYERS) {
             return;
         }
-        if(Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
             Bukkit.broadcastMessage("请稍等，正在启动游戏录制...");
             GameRecord.record(this);
         }
@@ -148,7 +148,7 @@ public class Game {
         Map<Player, PlayerRole> roleMapTemp = new HashMap<>();
 
         int runners = 1;
-        if(inGamePlayers.size() == maxPlayers){
+        if (inGamePlayers.size() == maxPlayers) {
             runners = runnerMax;
         }
 
@@ -161,10 +161,10 @@ public class Game {
         this.roleMapping = new ConcurrentHashMap<>(roleMapTemp);
         Bukkit.broadcastMessage("正在将逃亡者随机传送到远离猎人的位置...");
         Location airDropLoc = airDrop(getPlayersAsRole(PlayerRole.RUNNER).get(0).getWorld().getSpawnLocation());
-        getPlayersAsRole(PlayerRole.RUNNER).forEach(runner->runner.teleport(airDropLoc));
-        getPlayersAsRole(PlayerRole.HUNTER).forEach(p->p.teleport(p.getWorld().getSpawnLocation()));
+        getPlayersAsRole(PlayerRole.RUNNER).forEach(runner -> runner.teleport(airDropLoc));
+        getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.teleport(p.getWorld().getSpawnLocation()));
         Bukkit.broadcastMessage("设置游戏规则...");
-        inGamePlayers.forEach(p->{
+        inGamePlayers.forEach(p -> {
             p.setGameMode(GameMode.SURVIVAL);
             p.setFoodLevel(40);
             p.setHealth(p.getMaxHealth());
@@ -188,24 +188,24 @@ public class Game {
         plugin.getGame().getProgressManager().unlockProgress(GameProgress.GAME_STARTING);
 
     }
-    private final Map<World, Difficulty> difficultyMap = new HashMap<>();
-    public void switchWorldRuleForReady(boolean ready){
-        if(!ready){
-            Bukkit.getWorlds().forEach(world->{
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE,false);
-                world.setGameRule(GameRule.DO_MOB_SPAWNING,false);
-                world.setGameRule(GameRule.DO_FIRE_TICK,false);
-                world.setGameRule(GameRule.MOB_GRIEFING,false);
-                difficultyMap.put(world,world.getDifficulty());
+
+    public void switchWorldRuleForReady(boolean ready) {
+        if (!ready) {
+            Bukkit.getWorlds().forEach(world -> {
+                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+                world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+                world.setGameRule(GameRule.DO_FIRE_TICK, false);
+                world.setGameRule(GameRule.MOB_GRIEFING, false);
+                difficultyMap.put(world, world.getDifficulty());
                 world.setDifficulty(Difficulty.PEACEFUL);
             });
-        }else{
-            Bukkit.getWorlds().forEach(world->{
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE,true);
-                world.setGameRule(GameRule.DO_MOB_SPAWNING,true);
-                world.setGameRule(GameRule.DO_FIRE_TICK,true);
-                world.setGameRule(GameRule.MOB_GRIEFING,true);
-                world.setDifficulty(difficultyMap.getOrDefault(world,Difficulty.NORMAL));
+        } else {
+            Bukkit.getWorlds().forEach(world -> {
+                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+                world.setGameRule(GameRule.DO_MOB_SPAWNING, true);
+                world.setGameRule(GameRule.DO_FIRE_TICK, true);
+                world.setGameRule(GameRule.MOB_GRIEFING, true);
+                world.setDifficulty(difficultyMap.getOrDefault(world, Difficulty.NORMAL));
             });
         }
     }
@@ -213,8 +213,8 @@ public class Game {
     public void stop(PlayerRole winner, Location location) {
         this.inGamePlayers.stream().filter(Player::isOnline).forEach(player -> {
             player.setGameMode(GameMode.SPECTATOR);
-            player.teleport(location.clone().add(0,3,0));
-            player.teleport(Util.lookAt(player.getEyeLocation(),location));
+            player.teleport(location.clone().add(0, 3, 0));
+            player.teleport(Util.lookAt(player.getEyeLocation(), location));
         });
         this.status = GameStatus.ENDED;
         Bukkit.broadcastMessage(ChatColor.YELLOW + "游戏结束! 服务器将在30秒后重新启动！");
@@ -232,17 +232,17 @@ public class Game {
             getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 2000, 0));
             getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 2000, 0));
         }
-        if(Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
             GameRecord.stop(this);
             Bukkit.broadcastMessage("游戏录制已保存：" + GameRecord.getRoundUniqueID());
         }
         new MusicPlayer().playEnding();
-        Bukkit.getOnlinePlayers().stream().filter(p->!inGamePlayers.contains(p)).forEach(p->p.sendTitle(ChatColor.RED + "游戏结束", "The End", 0, 2000, 0));
+        Bukkit.getOnlinePlayers().stream().filter(p -> !inGamePlayers.contains(p)).forEach(p -> p.sendTitle(ChatColor.RED + "游戏结束", "The End", 0, 2000, 0));
         new BukkitRunnable() {
             @Override
             public void run() {
                 //开始结算阶段
-            StatisticsBaker baker = new StatisticsBaker();
+                StatisticsBaker baker = new StatisticsBaker();
                 //计算输出最多的玩家
                 getGameEndingData().setDamageOutput(baker.getDamageMaster());
                 getGameEndingData().setDamageReceive(baker.getDamageTakenMaster());
@@ -289,39 +289,39 @@ public class Game {
         int sleep = (int) maxCanCost;
 
         if (StringUtils.isNotBlank(gameEndingData.getDragonKiller())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GOLD+"屠龙勇士", gameEndingData.getDragonKiller(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.GOLD + "屠龙勇士", gameEndingData.getDragonKiller(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
 
         if (StringUtils.isNotBlank(gameEndingData.getRunnerKiller())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.RED+"逃亡者的噩梦", gameEndingData.getRunnerKiller(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.RED + "逃亡者的噩梦", gameEndingData.getRunnerKiller(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
 
         if (StringUtils.isNotBlank(gameEndingData.getDamageOutput())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.AQUA+"最佳伤害输出", gameEndingData.getDamageOutput(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.AQUA + "最佳伤害输出", gameEndingData.getDamageOutput(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getDamageReceive())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.LIGHT_PURPLE+"最惨怪物标靶", gameEndingData.getDamageReceive(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.LIGHT_PURPLE + "最惨怪物标靶", gameEndingData.getDamageReceive(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getTeamKiller())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.DARK_RED+"队友杀手", gameEndingData.getTeamKiller(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.DARK_RED + "队友杀手", gameEndingData.getTeamKiller(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getWalkMaster())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.YELLOW+"大探险家", gameEndingData.getWalkMaster(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.YELLOW + "大探险家", gameEndingData.getWalkMaster(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
         if (StringUtils.isNotBlank(gameEndingData.getJumpMaster())) {
-            Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GRAY+"CS:GO玩家", gameEndingData.getJumpMaster(),0 ,20000 ,0 ));
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.GRAY + "CS:GO玩家", gameEndingData.getJumpMaster(), 0, 20000, 0));
             Thread.sleep(sleep);
         }
 
-        Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GREEN+"感谢游玩", "Thanks for playing!",0 ,20000 ,0 ));
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.GREEN + "感谢游玩", "Thanks for playing!", 0, 20000, 0));
         Thread.sleep(sleep);
-        Bukkit.getOnlinePlayers().forEach(p->p.sendTitle(ChatColor.GREEN+plugin.getConfig().getString("server-name"), "友尽大逃杀-MineHunt",0 ,20000 ,0 ));
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(ChatColor.GREEN + plugin.getConfig().getString("server-name"), "友尽大逃杀-MineHunt", 0, 20000, 0));
         Thread.sleep(sleep);
         Bukkit.getOnlinePlayers().forEach(Player::resetTitle);
         Bukkit.shutdown();

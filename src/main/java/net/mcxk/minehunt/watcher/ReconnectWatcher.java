@@ -10,11 +10,12 @@ import java.util.List;
 
 public class ReconnectWatcher {
     private final MineHunt plugin = MineHunt.getInstance();
-    public ReconnectWatcher(){
-        new BukkitRunnable(){
+
+    public ReconnectWatcher() {
+        new BukkitRunnable() {
             @Override
             public void run() {
-                if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+                if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
                     return;
                 }
                 List<Player> removing = new ArrayList<>();
@@ -23,15 +24,15 @@ public class ReconnectWatcher {
                         removing.add(key);
                     }
                 });
-                //Prevent memory leaking
+                //Remove timeout players from the their team.
                 removing.forEach(player -> {
                     plugin.getGame().getReconnectTimer().remove(player);
-                    if(player.isOnline()){
+                    if (player.isOnline()) {
                         return;
                     }
                     plugin.getGame().playerLeft(player);
                 });
             }
-        }.runTaskTimer(plugin,0,20);
+        }.runTaskTimer(plugin, 0, 20);
     }
 }

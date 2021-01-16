@@ -1,9 +1,6 @@
 package net.mcxk.minehunt.util;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.PrimitiveIterator;
 
 @Data
 public class GameEndingData {
@@ -15,8 +12,6 @@ public class GameEndingData {
     private String walkMaster;
     private String jumpMaster;
     private String teamKiller;
-
-
 
 
 }

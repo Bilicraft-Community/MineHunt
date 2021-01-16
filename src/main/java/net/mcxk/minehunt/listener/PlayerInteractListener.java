@@ -17,9 +17,10 @@ import java.util.Optional;
 
 public class PlayerInteractListener implements Listener {
     private final MineHunt plugin = MineHunt.getInstance();
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void clickXJB(PlayerInteractEvent event){
-        if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+    public void clickXJB(PlayerInteractEvent event) {
+        if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
             event.setUseItemInHand(Event.Result.DENY);
@@ -27,24 +28,25 @@ public class PlayerInteractListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void damageXJB(EntityDamageEvent event){
-        if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+    public void damageXJB(EntityDamageEvent event) {
+        if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void runXJB(FoodLevelChangeEvent event){
-        if(plugin.getGame().getStatus() != GameStatus.GAME_STARTED){
+    public void runXJB(FoodLevelChangeEvent event) {
+        if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
             event.setCancelled(true);
         }
     }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void teamDamage(EntityDamageByEntityEvent event){
-        if(!(event.getEntity() instanceof Player)){
+    public void teamDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
-        if(!(event.getDamager() instanceof Player)){
+        if (!(event.getDamager() instanceof Player)) {
             return;
         }
         Player player1 = (Player) event.getEntity();
@@ -52,15 +54,14 @@ public class PlayerInteractListener implements Listener {
 
         Optional<PlayerRole> player1Role = plugin.getGame().getPlayerRole(player1);
         Optional<PlayerRole> player2Role = plugin.getGame().getPlayerRole(player2);
-        if(player1Role.isPresent() && player2Role.isPresent()){
-            if(player1Role.get() == player2Role.get()){
-               double historyDamage = plugin.getGame().getTeamDamageData().getOrDefault(player2, 0.0d);
-               historyDamage += event.getFinalDamage();
-               plugin.getGame().getTeamDamageData().put(player2,historyDamage);
+        if (player1Role.isPresent() && player2Role.isPresent()) {
+            if (player1Role.get() == player2Role.get()) {
+                double historyDamage = plugin.getGame().getTeamDamageData().getOrDefault(player2, 0.0d);
+                historyDamage += event.getFinalDamage();
+                plugin.getGame().getTeamDamageData().put(player2, historyDamage);
             }
         }
     }
-
 
 
 }

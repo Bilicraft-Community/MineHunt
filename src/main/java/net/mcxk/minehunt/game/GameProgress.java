@@ -13,7 +13,7 @@ public enum GameProgress {
     KILLED_DRAGON("结束了");
     private final String display;
 
-    GameProgress(String display){
+    GameProgress(String display) {
         this.display = display;
     }
 

@@ -2,7 +2,7 @@ name: MineHunt
 version: 1.0
 main: net.mcxk.minehunt.MineHunt
 api-version: 1.16
-soft-depend: [NoteBlockAPI, AdvancedReplay]
+soft-depend: [ NoteBlockAPI, AdvancedReplay ]
 commands:
   minehunt:
     description: nope

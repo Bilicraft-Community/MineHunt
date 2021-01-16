@@ -21,6 +21,7 @@ import java.util.Optional;
 
 public class GameWinnerListener implements Listener {
     private final MineHunt plugin = MineHunt.getInstance();
+    private String dragonKiller = "Magic";
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void playerDeath(PlayerDeathEvent event) {
@@ -50,8 +51,6 @@ public class GameWinnerListener implements Listener {
             }
         }
     }
-
-    private String dragonKiller = "Magic";
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void entityDeath(EntityDamageByEntityEvent event) {

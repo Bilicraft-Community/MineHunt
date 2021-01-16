@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,28 +23,30 @@ import java.util.Optional;
 
 public class PlayerCompassListener implements Listener {
     private final MineHunt plugin = MineHunt.getInstance();
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void craftCompass(CraftItemEvent event){
-        if(event.getRecipe().getResult().getType() != Material.COMPASS){
+    public void craftCompass(CraftItemEvent event) {
+        if (event.getRecipe().getResult().getType() != Material.COMPASS) {
             return;
         }
         Player player = (Player) event.getWhoClicked();
         Optional<PlayerRole> role = plugin.getGame().getPlayerRole(player);
-        if(!role.isPresent()){
+        if (!role.isPresent()) {
             return;
         }
-        if(role.get() == PlayerRole.HUNTER){
+        if (role.get() == PlayerRole.HUNTER) {
             plugin.getGame().switchCompass(true); //猎人合成，解锁
-        }else if (role.get() == PlayerRole.RUNNER){
+        } else if (role.get() == PlayerRole.RUNNER) {
             plugin.getGame().switchCompass(false); //逃亡者合成，锁回去
         }
     }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void respawnGivenCompass(PlayerRespawnEvent event){
-        if(plugin.getGame().getStatus() == GameStatus.GAME_STARTED && plugin.getGame().isCompassUnlocked()){
+    public void respawnGivenCompass(PlayerRespawnEvent event) {
+        if (plugin.getGame().getStatus() == GameStatus.GAME_STARTED && plugin.getGame().isCompassUnlocked()) {
             Optional<PlayerRole> role = plugin.getGame().getPlayerRole(event.getPlayer());
-            if(role.isPresent()){
-                if(role.get() == PlayerRole.HUNTER){
+            if (role.isPresent()) {
+                if (role.get() == PlayerRole.HUNTER) {
                     event.getPlayer().getInventory().addItem(new ItemStack(Material.COMPASS));
                 }
             }
@@ -53,46 +54,46 @@ public class PlayerCompassListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void deathDropRemoveCompass(PlayerDeathEvent event){
+    public void deathDropRemoveCompass(PlayerDeathEvent event) {
         event.getDrops().removeIf(itemStack -> itemStack.getType() == Material.COMPASS);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void clickCompass(PlayerInteractEvent event){
-        if(event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK){
+    public void clickCompass(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK) {
             return;
         }
-        if(event.getItem() == null || event.getItem().getType() != Material.COMPASS){
+        if (event.getItem() == null || event.getItem().getType() != Material.COMPASS) {
             return;
         }
-        if(!plugin.getGame().isCompassUnlocked()){
+        if (!plugin.getGame().isCompassUnlocked()) {
             event.getPlayer().setCompassTarget(event.getPlayer().getWorld().getSpawnLocation());
             event.getPlayer().sendMessage("你的队伍还没有解锁指南针，请先合成一个来解锁。");
         }
         List<Player> runners = plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER);
-        if(runners.isEmpty()){
+        if (runners.isEmpty()) {
             event.getPlayer().sendMessage("追踪失败，所有逃亡者均已离线等待重连中...");
         }
         Player closestRunner = null;
-        for(Player runner : plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER)){
-            if(runner.getWorld() != event.getPlayer().getWorld()){
+        for (Player runner : plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER)) {
+            if (runner.getWorld() != event.getPlayer().getWorld()) {
                 continue;
             }
-            if(closestRunner == null){
+            if (closestRunner == null) {
                 closestRunner = runner;
                 continue;
             }
-            if(event.getPlayer().getLocation().distance(runner.getLocation()) < closestRunner.getLocation().distance(event.getPlayer().getLocation())){
+            if (event.getPlayer().getLocation().distance(runner.getLocation()) < closestRunner.getLocation().distance(event.getPlayer().getLocation())) {
                 closestRunner = runner;
             }
         }
-        if(closestRunner == null){
+        if (closestRunner == null) {
             event.getPlayer().sendMessage("追踪失败，没有任何逃亡者和您所处的世界相同");
-        }else{
+        } else {
             event.getPlayer().setCompassTarget(closestRunner.getLocation());
             TextComponent component = new TextComponent("成功探测到距离您最近的逃亡者！正在追踪: %s".replace("%s", closestRunner.getName()));
             component.setColor(ChatColor.AQUA);
-            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR,component);
+            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
         }
     }
 }
