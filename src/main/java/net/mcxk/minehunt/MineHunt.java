@@ -32,6 +32,7 @@ public final class MineHunt extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
         instance = this;
         game = new Game();
         countDownWatcher = new CountDownWatcher();
@@ -42,7 +43,6 @@ public final class MineHunt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ProgressDetectingListener(), this);
         Bukkit.getPluginManager().registerEvents(new GameWinnerListener(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
-        getLogger().info("");
     }
 
     @Override
