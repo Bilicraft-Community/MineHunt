@@ -17,6 +17,7 @@ import java.util.Set;
 public class GameProgressManager {
     private final MineHunt plugin = MineHunt.getInstance();
     private final Set<GameProgress> unlocked = new HashSet<>();
+    private final boolean progressReward = plugin.getConfig().getBoolean("progress-reward",true);
 
     /**
      * 检查和解锁新的游戏进度
@@ -28,6 +29,9 @@ public class GameProgressManager {
             return;
         }
         if (!unlocked.add(progress)) {
+            return;
+        }
+        if(!progressReward){
             return;
         }
         processProgress(progress);

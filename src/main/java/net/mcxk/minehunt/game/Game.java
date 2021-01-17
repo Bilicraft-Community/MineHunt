@@ -159,10 +159,17 @@ public class Game {
         }
         noRolesPlayers.forEach(p -> roleMapTemp.put(p, PlayerRole.HUNTER));
         this.roleMapping = new ConcurrentHashMap<>(roleMapTemp);
-        Bukkit.broadcastMessage("正在将逃亡者随机传送到远离猎人的位置...");
-        Location airDropLoc = airDrop(getPlayersAsRole(PlayerRole.RUNNER).get(0).getWorld().getSpawnLocation());
-        getPlayersAsRole(PlayerRole.RUNNER).forEach(runner -> runner.teleport(airDropLoc));
-        getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.teleport(p.getWorld().getSpawnLocation()));
+
+
+        if(plugin.getConfig().getBoolean("runner-airdrop",true)) {
+            Bukkit.broadcastMessage("正在将逃亡者随机传送到远离猎人的位置...");
+            Location airDropLoc = airDrop(getPlayersAsRole(PlayerRole.RUNNER).get(0).getWorld().getSpawnLocation());
+            getPlayersAsRole(PlayerRole.RUNNER).forEach(runner -> runner.teleport(airDropLoc));
+            getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.teleport(p.getWorld().getSpawnLocation()));
+        }else{
+            getInGamePlayers().forEach(p->p.teleport(p.getWorld().getSpawnLocation()));
+        }
+
         Bukkit.broadcastMessage("设置游戏规则...");
         inGamePlayers.forEach(p -> {
             p.setGameMode(GameMode.SURVIVAL);
@@ -186,7 +193,7 @@ public class Game {
         status = GameStatus.GAME_STARTED;
         this.registerWatchers();
         plugin.getGame().getProgressManager().unlockProgress(GameProgress.GAME_STARTING);
-
+        inGamePlayers.forEach(player -> player.sendTitle(ChatColor.GREEN+"游戏开始","GO GO GO", 0,80,0));
     }
 
     public void switchWorldRuleForReady(boolean ready) {

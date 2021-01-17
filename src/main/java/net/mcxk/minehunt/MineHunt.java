@@ -89,6 +89,7 @@ public final class MineHunt extends JavaPlugin {
                 sender.sendMessage("错误：至少有2名玩家才可以强制开始游戏");
                 return true;
             }
+            this.game.start();
             return true;
         }
 
