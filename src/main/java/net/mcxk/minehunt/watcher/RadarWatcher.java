@@ -6,6 +6,7 @@ import net.mcxk.minehunt.game.PlayerRole;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -27,6 +28,9 @@ public class RadarWatcher {
                 for (Player hunter : hunters) {
                     for (Player runner : runners) {
                         if (hunter.getWorld() != runner.getWorld()) {
+                            continue;
+                        }
+                        if(runner.getGameMode() == GameMode.SPECTATOR){
                             continue;
                         }
                         double distance = hunter.getLocation().distanceSquared(runner.getLocation());

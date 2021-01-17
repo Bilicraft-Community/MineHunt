@@ -6,7 +6,10 @@ import net.mcxk.minehunt.game.PlayerRole;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,6 +20,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +83,9 @@ public class PlayerCompassListener implements Listener {
             if (runner.getWorld() != event.getPlayer().getWorld()) {
                 continue;
             }
+            if(runner.getGameMode() == GameMode.SPECTATOR){
+                continue;
+            }
             if (closestRunner == null) {
                 closestRunner = runner;
                 continue;
@@ -90,9 +97,19 @@ public class PlayerCompassListener implements Listener {
         if (closestRunner == null) {
             event.getPlayer().sendMessage("追踪失败，没有任何逃亡者和您所处的世界相同");
         } else {
-            event.getPlayer().setCompassTarget(closestRunner.getLocation());
             TextComponent component = new TextComponent("成功探测到距离您最近的逃亡者！正在追踪: %s".replace("%s", closestRunner.getName()));
             component.setColor(ChatColor.AQUA);
+            if(event.getPlayer().getWorld().getEnvironment() == World.Environment.NORMAL){
+                event.getPlayer().setCompassTarget(closestRunner.getLocation());
+            }else{
+                CompassMeta compassMeta = (CompassMeta)event.getItem().getItemMeta();
+                if(compassMeta == null){
+                    event.getPlayer().sendMessage("错误：指南针损坏，请联系服务器管理员报告BUG.");
+                }
+                compassMeta.setLodestone(closestRunner.getLocation());
+                compassMeta.setLodestoneTracked(false); //如果为true，则目标位置必须有Lodestone才有效；因此设为false 这貌似也是ManiHunt中的一个BUG
+                event.getItem().setItemMeta(compassMeta);
+            }
             event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
         }
     }

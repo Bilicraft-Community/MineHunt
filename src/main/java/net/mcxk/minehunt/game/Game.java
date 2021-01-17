@@ -44,10 +44,10 @@ public class Game {
     @Getter
     private Map<Player, PlayerRole> roleMapping; //线程安全
     @Getter
-    private int maxPlayers = plugin.getConfig().getInt("max-players");
+    private final int maxPlayers = plugin.getConfig().getInt("max-players");
     @Getter
-    private int minPlayers = plugin.getConfig().getInt("min-players");
-    private int runnerMax = plugin.getConfig().getInt("runner-max");
+    private final int minPlayers = plugin.getConfig().getInt("min-players");
+    private final int runnerMax = plugin.getConfig().getInt("runner-max");
     @Getter
     private boolean compassUnlocked = false;
 
@@ -338,6 +338,7 @@ public class Game {
     }
 
     //Code from ManHunt
+
     private Location airDrop(Location spawnpoint) {
         Location loc = spawnpoint.clone();
         loc = new Location(loc.getWorld(), loc.getBlockX(), 0, loc.getBlockZ());
