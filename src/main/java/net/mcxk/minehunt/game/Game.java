@@ -151,7 +151,9 @@ public class Game {
         if (inGamePlayers.size() == maxPlayers) {
             runners = runnerMax;
         }
-
+        if (noRolesPlayers.size() == 0){
+             Bukkit.shutdown(); //出错，重启服务器
+        }
         for (int i = 0; i < runners; i++) {
             Player selected = noRolesPlayers.get(random.nextInt(noRolesPlayers.size()));
             roleMapTemp.put(selected, PlayerRole.RUNNER);
