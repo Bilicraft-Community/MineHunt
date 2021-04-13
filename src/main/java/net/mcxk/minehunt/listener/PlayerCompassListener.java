@@ -40,8 +40,6 @@ public class PlayerCompassListener implements Listener {
         }
         if (role.get() == PlayerRole.HUNTER) {
             plugin.getGame().switchCompass(true); //猎人合成，解锁
-        } else if (role.get() == PlayerRole.RUNNER) {
-            plugin.getGame().switchCompass(false); //逃亡者合成，锁回去
         }
     }
 

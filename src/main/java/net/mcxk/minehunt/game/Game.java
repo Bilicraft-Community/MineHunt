@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.mcxk.minehunt.MineHunt;
-import net.mcxk.minehunt.replay.GameRecord;
 import net.mcxk.minehunt.util.GameEndingData;
 import net.mcxk.minehunt.util.MusicPlayer;
 import net.mcxk.minehunt.util.StatisticsBaker;
@@ -138,10 +137,6 @@ public class Game {
         if (status != GameStatus.WAITING_PLAYERS) {
             return;
         }
-        if (Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
-            Bukkit.broadcastMessage("请稍等，正在启动游戏录制...");
-            GameRecord.record(this);
-        }
         Bukkit.broadcastMessage("请稍后，系统正在随机分配玩家身份...");
         Random random = new Random();
         List<Player> noRolesPlayers = new ArrayList<>(inGamePlayers);
@@ -240,10 +235,6 @@ public class Game {
             Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "恭喜：" + runnerNames);
             getPlayersAsRole(PlayerRole.RUNNER).forEach(player -> player.sendTitle(ChatColor.GOLD + "胜利", "成功战胜了末影龙", 0, 2000, 0));
             getPlayersAsRole(PlayerRole.HUNTER).forEach(player -> player.sendTitle(ChatColor.RED + "游戏结束", "未能阻止末影龙死亡", 0, 2000, 0));
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("AdvancedReplay")) {
-            GameRecord.stop(this);
-            Bukkit.broadcastMessage("游戏录制已保存：" + GameRecord.getRoundUniqueID());
         }
         new MusicPlayer().playEnding();
         Bukkit.getOnlinePlayers().stream().filter(p -> !inGamePlayers.contains(p)).forEach(p -> p.sendTitle(ChatColor.RED + "游戏结束", "The End", 0, 2000, 0));
