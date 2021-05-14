@@ -101,6 +101,7 @@ public class PlayerCompassListener implements Listener {
                 CompassMeta compassMeta = (CompassMeta)event.getItem().getItemMeta();
                 if(compassMeta == null){
                     event.getPlayer().sendMessage("错误：指南针损坏，请联系服务器管理员报告BUG.");
+                    return;
                 }
                 compassMeta.setLodestone(null);
                 compassMeta.setLodestoneTracked(false); //如果为true，则目标位置必须有Lodestone才有效；因此设为false 这貌似也是ManiHunt中的一个BUG
