@@ -3,6 +3,7 @@ package net.mcxk.minehunt.listener;
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Optional;
@@ -37,6 +39,13 @@ public class PlayerInteractListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void runXJB(FoodLevelChangeEvent event) {
         if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void runXJB(CraftItemEvent event) {
+        if(event.getRecipe().getResult().getType() == Material.END_CRYSTAL){
             event.setCancelled(true);
         }
     }
