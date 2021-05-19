@@ -6,6 +6,7 @@ import net.mcxk.minehunt.game.PlayerRole;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -44,6 +45,8 @@ public class GameWinnerListener implements Listener {
                 String finalKiller = killer;
                 plugin.getGame().getGameEndingData().setRunnerKiller(finalKiller);
                 event.getEntity().setGameMode(GameMode.SPECTATOR);
+                //Runner强制复活在其死亡位置，避免死亡复活的跨世界传送
+                event.getEntity().setBedSpawnLocation(event.getEntity().getLocation(),true);
                 if (plugin.getGame().getPlayersAsRole(PlayerRole.RUNNER).stream().allMatch(p -> p.getGameMode() == GameMode.SPECTATOR)) {
                     plugin.getGame().stop(PlayerRole.HUNTER, event.getEntity().getLocation().add(0, 3, 0));
                     event.getEntity().setHealth(20); //Prevent player dead
@@ -57,19 +60,31 @@ public class GameWinnerListener implements Listener {
         if (plugin.getGame().getStatus() != GameStatus.GAME_STARTED) {
             return;
         }
-        if (event.getEntityType() != EntityType.ENDER_DRAGON) {
-            return;
-        }
-        if (event.getDamager() instanceof Player) {
-            Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(((Player) event.getDamager()));
-            if (role.isPresent()) {
-                if (role.get() == PlayerRole.HUNTER) {
-                    event.setCancelled(true);
-                    event.getEntity().sendMessage(ChatColor.RED + "猎人是末影龙的好伙伴，你不可以对龙造成伤害！");
-                    return;
+        if (event.getEntityType() == EntityType.ENDER_DRAGON) {
+            if (event.getDamager() instanceof Player) {
+                Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(((Player) event.getDamager()));
+                if (role.isPresent()) {
+                    if (role.get() == PlayerRole.HUNTER) {
+                        event.setCancelled(true);
+                        event.getEntity().sendMessage(ChatColor.RED + "猎人是末影龙的好伙伴，你不可以对龙造成伤害！");
+                        return;
+                    }
+                }
+            }else if(event.getDamager() instanceof Projectile){
+                Projectile projectile = (Projectile)event.getDamager();
+                if(projectile.getShooter() instanceof Player){
+                    Optional<PlayerRole> role = MineHunt.getInstance().getGame().getPlayerRole(((Player) projectile.getShooter()));
+                    if (role.isPresent()) {
+                        if (role.get() == PlayerRole.HUNTER) {
+                            event.setCancelled(true);
+                            event.getEntity().sendMessage(ChatColor.RED + "末影龙依靠末影水晶恢复生命，你不可以破坏末影水晶！");
+                            return;
+                        }
+                    }
                 }
             }
         }
+
         dragonKiller = event.getDamager().getName();
     }
 
