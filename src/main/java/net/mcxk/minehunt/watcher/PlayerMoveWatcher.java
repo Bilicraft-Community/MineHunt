@@ -47,9 +47,11 @@ public class PlayerMoveWatcher {
                 double farDistance = 0;
                 for(Player runner : MineHunt.getInstance().getGame().getPlayersAsRole(PlayerRole.RUNNER)){
                     for(Player hunter : MineHunt.getInstance().getGame().getPlayersAsRole(PlayerRole.HUNTER)){
-                        double d = runner.getLocation().distance(hunter.getLocation());
-                        if(d > farDistance)
-                            farDistance = d;
+                        if(runner.getWorld() == hunter.getWorld()) {
+                            double d = runner.getLocation().distance(hunter.getLocation());
+                            if (d > farDistance)
+                                farDistance = d;
+                        }
                     }
                 }
                 if(((int)farDistance % 1000) > 0){
