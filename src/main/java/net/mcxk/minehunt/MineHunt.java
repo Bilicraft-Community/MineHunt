@@ -11,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,6 +91,27 @@ public final class MineHunt extends JavaPlugin {
                 return true;
             }
             this.game.start();
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("ob") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
+            if(!(sender instanceof Player)){
+                return false;
+            }
+            Player player = (Player)sender;
+            if (this.getGame().getStatus() != GameStatus.GAME_STARTED || player.getGameMode() != GameMode.SPECTATOR) {
+                sender.sendMessage("错误：您的身份不是观察者");
+                return true;
+            }
+            if(args.length < 2){
+                sender.sendMessage("错误：请输入要观察的玩家的游戏ID");
+                return true;
+            }
+            Player obPlayer =  Bukkit.getPlayer(args[1]);
+            if(obPlayer == null){
+                sender.sendMessage("错误：指定玩家不存在");
+                return true;
+            }
+            player.teleport(obPlayer.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             return true;
         }
 
