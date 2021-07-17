@@ -5,8 +5,10 @@ import net.mcxk.minehunt.game.Game;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
 import net.mcxk.minehunt.listener.*;
+import net.mcxk.minehunt.util.Util;
 import net.mcxk.minehunt.watcher.CountDownWatcher;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.Collectors;
 
 public final class MineHunt extends JavaPlugin {
     @Getter
@@ -93,7 +97,13 @@ public final class MineHunt extends JavaPlugin {
             this.game.start();
             return true;
         }
-        if (args[0].equalsIgnoreCase("ob") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
+        if (args[0].equalsIgnoreCase("teams") && this.getGame().getStatus() == GameStatus.GAME_STARTED) {
+            sender.sendMessage(ChatColor.RED + "猎人: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.HUNTER).stream().map(Player::getName).collect(Collectors.toList())));
+            sender.sendMessage(ChatColor.GREEN + "逃亡者: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.RUNNER).stream().map(Player::getName).collect(Collectors.toList())));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("ob")) {
             if(!(sender instanceof Player)){
                 return false;
             }
