@@ -68,12 +68,12 @@ public final class MineHunt extends JavaPlugin {
         }
 
 
-        if (!sender.hasPermission("minehunt.admin")) {
-            return false;
-        }
 
         //不安全命令 完全没做检查，确认你会用再执行
         if (args[0].equalsIgnoreCase("hunter") || args[0].equalsIgnoreCase("runner")) {
+            if(!sender.hasPermission("minehunt.admin")){
+                return false;
+            }
             Player player = (Player) sender;
             this.getGame().getInGamePlayers().add(player);
             if (args[0].equalsIgnoreCase("hunter")) {
@@ -86,10 +86,16 @@ public final class MineHunt extends JavaPlugin {
             return true;
         }
         if (args[0].equalsIgnoreCase("resetcountdown") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
+            if(!sender.hasPermission("minehunt.admin")){
+                return false;
+            }
             this.getCountDownWatcher().resetCountdown();
             return true;
         }
         if (args[0].equalsIgnoreCase("forcestart") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
+            if(!sender.hasPermission("minehunt.admin")){
+                return false;
+            }
             if (this.getGame().getInGamePlayers().size() < 2) {
                 sender.sendMessage("错误：至少有2名玩家才可以强制开始游戏");
                 return true;
