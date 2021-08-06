@@ -38,9 +38,7 @@ public class PlayerCompassListener implements Listener {
         if (!role.isPresent()) {
             return;
         }
-        if (role.get() == PlayerRole.HUNTER) {
-            plugin.getGame().switchCompass(true); //猎人合成，解锁
-        }
+        plugin.getGame().switchCompass(role.get() == PlayerRole.HUNTER); //猎人合成，解锁
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

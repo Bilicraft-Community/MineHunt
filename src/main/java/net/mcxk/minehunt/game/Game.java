@@ -14,6 +14,7 @@ import net.mcxk.minehunt.watcher.RadarWatcher;
 import net.mcxk.minehunt.watcher.ReconnectWatcher;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -167,6 +168,13 @@ public class Game {
             getInGamePlayers().forEach(p->p.teleport(p.getWorld().getSpawnLocation()));
         }
 
+        if(getPlayersAsRole(PlayerRole.RUNNER).size() != 2 && getInGamePlayers().size() > 2){
+            getPlayersAsRole(PlayerRole.RUNNER).forEach(runner->{
+                runner.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0d);
+                runner.setHealth(40.0d);
+            });
+        }
+
         Bukkit.broadcastMessage("设置游戏规则...");
         inGamePlayers.forEach(p -> {
             p.setGameMode(GameMode.SURVIVAL);
@@ -183,7 +191,7 @@ public class Game {
         Bukkit.broadcastMessage(ChatColor.RED + "猎人需要阻止逃亡者击杀末影龙或击杀逃亡者以取得胜利。");
         Bukkit.broadcastMessage(ChatColor.GREEN + "逃亡者需要在猎人的追杀下击败末影龙以取得胜利。逃亡者无法复活且由于任何原因死亡均会导致猎人胜利。");
         Bukkit.broadcastMessage(ChatColor.AQUA + "在游戏过程中，当你解锁特定的游戏阶段时，全体玩家将会获得阶段奖励，可能是特定物品也可能是增益效果。");
-        Bukkit.broadcastMessage(ChatColor.AQUA + "猎人可以通过合成指南针来定位逃亡者的方向；逃亡者可以通过合成指南针摧毁猎人的指南针。");
+        Bukkit.broadcastMessage(ChatColor.AQUA + "猎人可以通过合成指南针来定位逃亡者的方向。");
         Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "祝君好运，末地见！");
         Bukkit.broadcastMessage(ChatColor.RED + "猎人: " + Util.list2String(getPlayersAsRole(PlayerRole.HUNTER).stream().map(Player::getName).collect(Collectors.toList())));
         Bukkit.broadcastMessage(ChatColor.GREEN + "逃亡者: " + Util.list2String(getPlayersAsRole(PlayerRole.RUNNER).stream().map(Player::getName).collect(Collectors.toList())));

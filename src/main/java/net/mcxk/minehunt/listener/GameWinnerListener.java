@@ -58,6 +58,7 @@ public class GameWinnerListener implements Listener {
         String e = "未知";
         EntityDamageEvent damage = entity.getLastDamageCause();
             if (damage != null) {
+                e=damage.getCause().name();
                 boolean skip = true;
 
                 if (damage instanceof EntityDamageByEntityEvent) {
