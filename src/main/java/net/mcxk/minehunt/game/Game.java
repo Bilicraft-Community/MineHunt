@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import me.MrGraycat.eGlow.API.Enum.EGlowColor;
 import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.util.GameEndingData;
 import net.mcxk.minehunt.util.MusicPlayer;
@@ -30,7 +31,7 @@ public class Game {
     @Getter
     private final Set<Player> inGamePlayers = Sets.newCopyOnWriteArraySet(); //线程安全
     @Getter
-    private final int countdown = 30;
+    private final int countdown = 60;
     @Getter
     private final Map<Player, Long> reconnectTimer = new HashMap<>();
     @Getter
@@ -53,7 +54,6 @@ public class Game {
 
     public Game() {
         fixConfig();
-
     }
 
     public void switchCompass(boolean unlocked) {
@@ -132,7 +132,25 @@ public class Game {
         Bukkit.broadcastMessage("玩家：" + player.getName() + " 因长时间未能重新连接回对战而被从列表中剔除");
         Bukkit.broadcastMessage(ChatColor.RED + "猎人: " + Util.list2String(getPlayersAsRole(PlayerRole.HUNTER).stream().map(Player::getName).collect(Collectors.toList())));
         Bukkit.broadcastMessage(ChatColor.GREEN + "逃亡者: " + Util.list2String(getPlayersAsRole(PlayerRole.RUNNER).stream().map(Player::getName).collect(Collectors.toList())));
+        setupGlow();
     }
+
+    public void setupGlow(){
+        if(plugin.getEGlowAPI() == null) return;
+        setupGlowForce();
+    }
+    public void setupGlowForce(){
+        plugin.getLogger().info("Rendering players glowing...");
+        getPlayersAsRole(PlayerRole.RUNNER).forEach(player->{
+            plugin.getEGlowAPI().enableGlow(player, EGlowColor.DARK_GREEN);
+            plugin.getEGlowAPI().setCustomGlowReceivers(player,getPlayersAsRole(PlayerRole.RUNNER));
+        });
+        getPlayersAsRole(PlayerRole.HUNTER).forEach(player->{
+            plugin.getEGlowAPI().enableGlow(player, EGlowColor.DARK_RED);
+            plugin.getEGlowAPI().setCustomGlowReceivers(player,getPlayersAsRole(PlayerRole.HUNTER));
+        });
+    }
+
 
     public void start() {
         if (status != GameStatus.WAITING_PLAYERS) {
@@ -199,6 +217,7 @@ public class Game {
         this.registerWatchers();
         plugin.getGame().getProgressManager().unlockProgress(GameProgress.GAME_STARTING);
         inGamePlayers.forEach(player -> player.sendTitle(ChatColor.GREEN+"游戏开始","GO GO GO", 0,80,0));
+        setupGlow();
     }
 
     public void switchWorldRuleForReady(boolean ready) {

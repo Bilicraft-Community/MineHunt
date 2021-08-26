@@ -4,6 +4,7 @@ import net.mcxk.minehunt.MineHunt;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,10 +30,14 @@ public class ChatListener implements Listener {
                 MineHunt.getInstance().getGame().getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.sendMessage(ChatColor.GRAY + "[TEAM] " + event.getPlayer().getDisplayName() + ": " + ChatColor.RESET + event.getMessage()));
             }
         } else {
+            String displayName = event.getPlayer().getDisplayName();
+            if(event.getPlayer().getGameMode() == GameMode.SPECTATOR){
+                displayName = ChatColor.STRIKETHROUGH + displayName;
+            }
             if (role.get() == PlayerRole.HUNTER) {
-                event.setFormat(ChatColor.RED + "[HUNTER] " + event.getPlayer().getDisplayName() + " " + ChatColor.RESET + event.getMessage());
+                event.setFormat(ChatColor.RED + "[HUNTER] " + displayName + " " + ChatColor.RESET + event.getMessage());
             } else if (role.get() == PlayerRole.RUNNER) {
-                event.setFormat(ChatColor.GREEN + "[RUNNER] " + event.getPlayer().getDisplayName() + " " + ChatColor.RESET + event.getMessage());
+                event.setFormat(ChatColor.GREEN + "[RUNNER] " + displayName + " " + ChatColor.RESET + event.getMessage());
             }
         }
     }

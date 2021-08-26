@@ -94,5 +94,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Replay (2).jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>eGlow</groupId>
+            <artifactId>eGlow</artifactId>
+            <version>LOCAL</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/eGlow 3.1.0 1.9.4-1.17.1.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

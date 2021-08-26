@@ -1,6 +1,8 @@
 package net.mcxk.minehunt;
 
 import lombok.Getter;
+import me.MrGraycat.eGlow.API.EGlowAPI;
+import me.MrGraycat.eGlow.EGlow;
 import net.mcxk.minehunt.game.Game;
 import net.mcxk.minehunt.game.GameStatus;
 import net.mcxk.minehunt.game.PlayerRole;
@@ -28,6 +30,8 @@ public final class MineHunt extends JavaPlugin {
     @Getter
     private CountDownWatcher countDownWatcher;
 
+    private EGlowAPI eGlowAPI = null;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -48,6 +52,15 @@ public final class MineHunt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ProgressDetectingListener(), this);
         Bukkit.getPluginManager().registerEvents(new GameWinnerListener(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+
+    }
+
+    public EGlowAPI getEGlowAPI() {
+        if ( eGlowAPI == null && Bukkit.getPluginManager().getPlugin("eGlow") != null) {
+            getLogger().info("Enabling eGlow hooks...");
+            this.eGlowAPI = EGlow.getAPI();
+        }
+        return this.eGlowAPI;
     }
 
     @Override
@@ -68,13 +81,21 @@ public final class MineHunt extends JavaPlugin {
         }
 
 
-
         //不安全命令 完全没做检查，确认你会用再执行
         if (args[0].equalsIgnoreCase("hunter") || args[0].equalsIgnoreCase("runner")) {
-            if(!sender.hasPermission("minehunt.admin")){
+            if (!sender.hasPermission("minehunt.admin")) {
                 return false;
             }
-            Player player = (Player) sender;
+            Player player;
+            if (args.length < 2) {
+                player = (Player) sender;
+            } else {
+                player = Bukkit.getPlayer(args[1]);
+                if (player == null) {
+                    sender.sendMessage("玩家不存在 /minehunt <hunter/runner> <player>");
+                    return true;
+                }
+            }
             this.getGame().getInGamePlayers().add(player);
             if (args[0].equalsIgnoreCase("hunter")) {
                 this.getGame().getRoleMapping().put(player, PlayerRole.HUNTER);
@@ -82,18 +103,19 @@ public final class MineHunt extends JavaPlugin {
                 this.getGame().getRoleMapping().put(player, PlayerRole.RUNNER);
             }
             player.setGameMode(GameMode.SURVIVAL);
-            Bukkit.broadcastMessage("玩家 " + sender.getName() + " 强制加入了游戏！ 身份：" + args[0]);
+            Bukkit.broadcastMessage("玩家 " + player.getName() + " 强制加入了游戏！ 身份：" + args[0]);
+            game.setupGlow();
             return true;
         }
         if (args[0].equalsIgnoreCase("resetcountdown") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
-            if(!sender.hasPermission("minehunt.admin")){
+            if (!sender.hasPermission("minehunt.admin")) {
                 return false;
             }
             this.getCountDownWatcher().resetCountdown();
             return true;
         }
         if (args[0].equalsIgnoreCase("forcestart") && this.getGame().getStatus() == GameStatus.WAITING_PLAYERS) {
-            if(!sender.hasPermission("minehunt.admin")){
+            if (!sender.hasPermission("minehunt.admin")) {
                 return false;
             }
             if (this.getGame().getInGamePlayers().size() < 2) {
@@ -103,33 +125,53 @@ public final class MineHunt extends JavaPlugin {
             this.game.start();
             return true;
         }
+        if (args[0].equalsIgnoreCase("forceglow") && this.getGame().getStatus() == GameStatus.GAME_STARTED) {
+            if (!sender.hasPermission("minehunt.admin")) {
+                return false;
+            }
+            this.game.setupGlowForce();
+            return true;
+        }
         if (args[0].equalsIgnoreCase("teams") && this.getGame().getStatus() == GameStatus.GAME_STARTED) {
-            sender.sendMessage(ChatColor.RED + "猎人: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.HUNTER).stream().map(Player::getName).collect(Collectors.toList())));
-            sender.sendMessage(ChatColor.GREEN + "逃亡者: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.RUNNER).stream().map(Player::getName).collect(Collectors.toList())));
+            sender.sendMessage(ChatColor.RED + "猎人: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.HUNTER).stream().map(player -> {
+                String displayName = player.getDisplayName();
+                if (player.getGameMode() == GameMode.SPECTATOR) {
+                    displayName = ChatColor.RED.toString() + ChatColor.STRIKETHROUGH + displayName + ChatColor.RESET;
+                }
+                return displayName;
+            }).collect(Collectors.toList())));
+            sender.sendMessage(ChatColor.GREEN + "逃亡者: " + Util.list2String(getGame().getPlayersAsRole(PlayerRole.RUNNER).stream().map(player -> {
+                String displayName = player.getDisplayName();
+                if (player.getGameMode() == GameMode.SPECTATOR) {
+                    displayName = ChatColor.GREEN.toString() + ChatColor.STRIKETHROUGH + displayName + ChatColor.RESET;
+                }
+                return displayName;
+            }).collect(Collectors.toList())));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("ob")) {
-            if(!(sender instanceof Player)){
+            if (!(sender instanceof Player)) {
                 return false;
             }
-            Player player = (Player)sender;
+            Player player = (Player) sender;
             if (this.getGame().getStatus() != GameStatus.GAME_STARTED || player.getGameMode() != GameMode.SPECTATOR) {
                 sender.sendMessage("错误：您的身份不是观察者");
                 return true;
             }
-            if(args.length < 2){
+            if (args.length < 2) {
                 sender.sendMessage("错误：请输入要观察的玩家的游戏ID");
                 return true;
             }
-            Player obPlayer =  Bukkit.getPlayer(args[1]);
-            if(obPlayer == null){
+            Player obPlayer = Bukkit.getPlayer(args[1]);
+            if (obPlayer == null) {
                 sender.sendMessage("错误：指定玩家不存在");
                 return true;
             }
             player.teleport(obPlayer.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             return true;
         }
+
 
         return false;
     }
