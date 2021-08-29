@@ -51,6 +51,8 @@ public class Game {
     private final int runnerMax = plugin.getConfig().getInt("runner-max");
     @Getter
     private boolean compassUnlocked = false;
+    @Getter
+    private boolean compassRemoved = false;
 
     public Game() {
         fixConfig();
@@ -64,9 +66,10 @@ public class Game {
         if (unlocked) {
             getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.getInventory().addItem(new ItemStack(Material.COMPASS, 1)));
             Bukkit.broadcastMessage(ChatColor.YELLOW + "猎人已解锁追踪指南针！逃亡者的位置已经暴露！");
-        } else {
+        } else if(!compassRemoved) {
             getPlayersAsRole(PlayerRole.HUNTER).forEach(p -> p.getInventory().remove(Material.COMPASS));
             Bukkit.broadcastMessage(ChatColor.YELLOW + "猎人的追踪指南针被破坏失效，需要重新解锁！");
+            compassRemoved = true;
         }
         getPlayersAsRole(PlayerRole.RUNNER).forEach(p -> p.getInventory().remove(Material.COMPASS)); //清除合成的指南针
     }
