@@ -45,6 +45,7 @@ public class PlayerServerListener implements Listener {
                 if (plugin.getGame().getInGamePlayers().contains(event.getPlayer())) {
                     Bukkit.broadcastMessage(ChatColor.GREEN + "玩家 " + event.getPlayer().getName() + " 已重新连接");
                     plugin.getGame().getReconnectTimer().entrySet().removeIf(set -> set.getKey().getUniqueId().equals(event.getPlayer().getUniqueId()));
+                    plugin.getGame().setupGlow();
                 }
 
             } else {

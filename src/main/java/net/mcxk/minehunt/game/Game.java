@@ -142,10 +142,12 @@ public class Game {
     public void setupGlowForce(){
         plugin.getLogger().info("Rendering players glowing...");
         getPlayersAsRole(PlayerRole.RUNNER).forEach(player->{
+            if(player == null || !player.isOnline()) return;
             plugin.getEGlowAPI().enableGlow(player, EGlowColor.DARK_GREEN);
             plugin.getEGlowAPI().setCustomGlowReceivers(player,getPlayersAsRole(PlayerRole.RUNNER));
         });
         getPlayersAsRole(PlayerRole.HUNTER).forEach(player->{
+            if(player == null || !player.isOnline()) return;
             plugin.getEGlowAPI().enableGlow(player, EGlowColor.DARK_RED);
             plugin.getEGlowAPI().setCustomGlowReceivers(player,getPlayersAsRole(PlayerRole.HUNTER));
         });
